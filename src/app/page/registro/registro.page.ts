@@ -50,6 +50,7 @@ export class RegistroPage {
     this.perfilUsuario.telefono = "";
     this.perfilUsuario.user.password = "";
     this.perfilUsuario.user.usuario = "";
+    this.passwordConfirm = "";
   }
 
   //Se crea el popup de error para la validación de campos

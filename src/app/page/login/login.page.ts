@@ -4,6 +4,7 @@ import { ServiceUserService } from 'src/app/api/service-user/service-user.servic
 import { AuthService } from 'src/app/api/service-auth/auth.service';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
 import { User } from 'src/app/models/user';
+import { AlertController } from '@ionic/angular';
 
 
 @Component({
@@ -33,7 +34,7 @@ export class LoginPage {
     password: ""
   }
 
-  constructor(private _userService: ServiceUserService, private router: Router, private authService: AuthService) { }
+  constructor(private _userService: ServiceUserService, private router: Router, private authService: AuthService, private alertController: AlertController) { }
 
   ngOnInit() {
     this.limpiar()
@@ -41,8 +42,18 @@ export class LoginPage {
 
   //función para limpiar los campos
   limpiar() {
-    this.perfilUsuario.user.password = "";
-    this.perfilUsuario.user.usuario = "";
+    this.user.password = "";
+    this.user.usuario = "";
+  }
+
+  //Se crea el popup de error usuario no existe
+  private async showAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: ['Aceptar'],
+    });
+    await alert.present();
   }
 
   //La función recibe el user (usuario y password) como parámetro desde el html
@@ -56,6 +67,7 @@ export class LoginPage {
     if (this.perfilUsuario.user.usuario.length > 0 && this.perfilUsuario.user.password.length > 0) {
       console.info("el usuario existe");
       console.info(this.perfilUsuario);
+      this.limpiar();
       //Se redirecciona a la página home enviando el usuario de tipo PerfilUsuario con todos sus atributos
       this.router.navigate(['home'], {
         state: {
@@ -64,6 +76,8 @@ export class LoginPage {
       })
     } else {
       console.error("el usuario no existe")
+      this.limpiar();
+      this.showAlert('ERROR', 'El usuario no existe');
     }
   }
 
