@@ -77,7 +77,7 @@ export class LoginPage {
     } else {
       console.error("el usuario no existe")
       this.limpiar();
-      this.showAlert('ERROR', 'El usuario no existe');
+      this.showAlert('ERROR', 'Vuelva a ingresar usuario y contraseña');
     }
   }
 
