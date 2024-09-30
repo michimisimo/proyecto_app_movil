@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { User } from 'src/app/models/user';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class ServiceUserService {
     telefono: ""  
   }
 
-  constructor() { }
+  constructor(private httpClient: HttpClient) { }
 
   private lista_usuarios:PerfilUsuario[] = [
 
