@@ -30,6 +30,6 @@ if (campo=="apellido"){
     }
 }
 else{
-    console.info("Correcto. Los campos nombre y apellidos están llenos.")
+    console.info("Correcto. Los campos nombre y apellido están llenos.")
 }
 }
