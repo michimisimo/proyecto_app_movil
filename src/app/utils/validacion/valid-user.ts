@@ -3,8 +3,8 @@ import { PerfilUsuario } from "src/app/models/perfil-usuario";
 import { aplicarEstilos} from 'src/app/utils/validacion/valid-campo';
 
 export function validarLongitudUsuario(usuario:string, error: ErrorPerfilUsuario, inputUsuario: HTMLInputElement){
-    if (usuario.length < 4 || usuario.length > 20) {
-      error.usuario = "Ingrese un usuario de 4 a 20 caracteres";
+    if (usuario.length < 4) {
+      error.usuario = "Ingrese un usuario de más de 4 caracteres";
       aplicarEstilos(inputUsuario, error.usuario, true);
     } else {
       aplicarEstilos(inputUsuario, '', false);
