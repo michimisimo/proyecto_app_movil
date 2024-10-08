@@ -1,9 +1,6 @@
-import { Rol } from "./rol";
-import { User } from "./user";
-
-export interface PerfilUsuario{
-    user: User;
-    rol: Rol;
+export interface PerfilUsuario {
+    ID_user: number;
+    ID_rol: number;
     nombre: string;
     apellido: string;
     correo: string;
