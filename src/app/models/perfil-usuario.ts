@@ -1,8 +1,6 @@
 export interface PerfilUsuario {
-    ID_user: number;
-    ID_rol: number;
     nombre: string;
+    correo: string,
     apellido: string;
-    correo: string;
     telefono: string;
 }

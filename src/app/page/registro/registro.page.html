@@ -6,35 +6,37 @@
     <div class="form">
       <h3>Registro</h3>
       <div class="inputs">
-        <label class="titulo_campo"  for="username">Usuario</label>
-        <input class="sin_borde" required type="text" [(ngModel)]="perfilUsuario.user.usuario" name="username" maxlength="20">
-        <p class="msg_error" *ngIf = "error.usuario"> {{error.usuario}}</p>
+        <label class="titulo_campo" for="username">Usuario</label>
+        <input class="sin_borde" required type="text" [(ngModel)]="user.usuario" name="username" maxlength="20">
+        <p class="msg_error" *ngIf="error.usuario"> {{error.usuario}}</p>
 
         <label class="titulo_campo" for="password">Contraseña</label>
-        <input class="sin_borde" required type="password" name="password" [(ngModel)]="perfilUsuario.user.password" maxlength="20">
-        <p class="msg_error" *ngIf = "error.password"> {{error.password}}</p>
+        <input class="sin_borde" required type="password" name="password" [(ngModel)]="user.password" maxlength="20">
+        <p class="msg_error" *ngIf="error.password"> {{error.password}}</p>
 
         <label class="titulo_campo" for="confirmPassword">Confirmar Contraseña</label>
-        <input class="sin_borde" required type="password"[(ngModel)]="passwordConfirm" name="confirmPassword" maxlength="20">
-        <p class="msg_error" *ngIf = "error.password_match"> {{error.password_match}}</p>
+        <input class="sin_borde" required type="password" [(ngModel)]="passwordConfirm" name="confirmPassword"
+          maxlength="20">
+        <p class="msg_error" *ngIf="error.password_match"> {{error.password_match}}</p>
 
         <label class="titulo_campo" for="firstName">Nombre</label>
         <input class="sin_borde" type="text" [(ngModel)]="perfilUsuario.nombre" name="firstName" maxlength="20">
-        <p class="msg_error" *ngIf = "error.nombre"> {{error.nombre}}</p>
+        <p class="msg_error" *ngIf="error.nombre"> {{error.nombre}}</p>
 
         <label class="titulo_campo" for="lastName">Apellido</label>
-        <input class="sin_borde" required type="text" [(ngModel)]="perfilUsuario.apellido" name="lastName" maxlength="20">
-        <p class="msg_error" *ngIf = "error.apellido"> {{error.apellido}}</p>
+        <input class="sin_borde" required type="text" [(ngModel)]="perfilUsuario.apellido" name="lastName"
+          maxlength="20">
+        <p class="msg_error" *ngIf="error.apellido"> {{error.apellido}}</p>
 
         <label class="titulo_campo" for="email">Email</label>
         <input class="sin_borde" required type="email" [(ngModel)]="perfilUsuario.correo" name="email" maxlength="40">
-        <p class="msg_error" *ngIf = "error.correo"> {{error.correo}}</p>
+        <p class="msg_error" *ngIf="error.correo"> {{error.correo}}</p>
 
         <label class="titulo_campo" for="phone">Telefono</label>
         <input class="sin_borde" required type="text" [(ngModel)]="perfilUsuario.telefono" name="phone" maxlength="9">
-        <p class="msg_error" *ngIf = "error.telefono"> {{error.telefono}}</p>
+        <p class="msg_error" *ngIf="error.telefono"> {{error.telefono}}</p>
 
-        <button type="submit" (click)="registrar(perfilUsuario)">Registrar</button>
+        <button type="submit" (click)="registrar()">Registrar</button>
         <button type="submit" (click)="irLogin()">Volver</button>
       </div>
     </div>

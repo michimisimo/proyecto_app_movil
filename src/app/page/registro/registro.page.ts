@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/api/service-auth/auth.service';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
-import { ServiceUserService } from 'src/app/api/service-user/service-user.service';
+import { User } from 'src/app/models/user';
+import { Rol } from 'src/app/models/rol';
+import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import { ErrorPerfilUsuario } from 'src/app/models/error-perfil-usuario';
-import { validarPerfilUsuario} from 'src/app/utils/validacion/valid-registro';
+import { validarPerfilUsuario } from 'src/app/utils/validacion/valid-registro';
+import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,15 +22,12 @@ import { validarPerfilUsuario} from 'src/app/utils/validacion/valid-registro';
 })
 export class RegistroPage {
 
+  user: User = {
+    usuario: '',
+    password: ''
+  }
+
   perfilUsuario: PerfilUsuario = {
-    user: {
-      usuario: "",
-      password: ""
-    },
-    rol: {
-      id: 2,
-      nombre: "Invitado" //El registro por defecto crea usuarios con rol invitado
-    },
     nombre: "",
     apellido: "",
     correo: "",
@@ -38,9 +38,13 @@ export class RegistroPage {
 
   passwordConfirm: String = "";
 
-  constructor(private authService: AuthService, private _userService: ServiceUserService, private router: Router, private alertController: AlertController) { }
+  constructor(private authService: AuthService,
+    private _userService: ServiceUserService,
+    private router: Router,
+    private alertController: AlertController,
+    private _usuarioService: ServiceUsuarioService) { }
 
-  ngOnInit(): void{
+  ngOnInit(): void {
     this.limpiar();
   }
 
@@ -49,8 +53,8 @@ export class RegistroPage {
     this.perfilUsuario.apellido = "";
     this.perfilUsuario.correo = "";
     this.perfilUsuario.telefono = "";
-    this.perfilUsuario.user.password = "";
-    this.perfilUsuario.user.usuario = "";
+    this.user.password = "";
+    this.user.usuario = "";
     this.passwordConfirm = "";
   }
 
@@ -64,8 +68,8 @@ export class RegistroPage {
     await alert.present();
   }
 
-  registrar(perfilUsuario: PerfilUsuario) {
-    
+  registrar() {
+
     // Selección de inputs por nombre
     const inputUsuario = document.getElementsByName('username')[0] as HTMLInputElement;
     const inputPassword = document.getElementsByName('password')[0] as HTMLInputElement;
@@ -75,9 +79,19 @@ export class RegistroPage {
     const inputCorreo = document.getElementsByName('email')[0] as HTMLInputElement;
     const inputTelefono = document.getElementsByName('phone')[0] as HTMLInputElement;
 
+    // Asignar usuario y contraseña al objeto User
+    this.user.usuario = inputUsuario.value;
+    this.user.password = inputPassword.value; // Se encriptará más adelante
+
+    // Asignar otros datos al objeto PerfilUsuario
+    this.perfilUsuario.nombre = inputNombre.value;
+    this.perfilUsuario.apellido = inputApellido.value;
+    this.perfilUsuario.telefono = inputTelefono.value;
+    this.perfilUsuario.correo = inputCorreo.value;
+
     // Obtener error
-    this.error = validarPerfilUsuario(this.perfilUsuario, this.passwordConfirm, inputUsuario, inputPassword, inputPassConfirm, inputNombre, inputApellido, inputCorreo, inputTelefono);
-    
+    this.error = validarPerfilUsuario(this.user, this.perfilUsuario, this.passwordConfirm, inputUsuario, inputPassword, inputPassConfirm, inputNombre, inputApellido, inputCorreo, inputTelefono);
+
     if (Object.keys(this.error).length > 0) {
       console.log("Errores encontrados:", this.error);
       this.showAlert('ERROR', 'Por favor, corrige los errores antes de continuar.');
@@ -85,16 +99,37 @@ export class RegistroPage {
     }
 
     // Encriptar la contraseña
-    const hashedPassword = this.authService.encryptPassword(this.perfilUsuario.user.password);
+    const hashedPassword = this.authService.encryptPassword(this.user.password);
     console.log('Contraseña encriptada:', hashedPassword);
-    this.perfilUsuario.user.password = hashedPassword;
+    this.user.password = hashedPassword;
 
-    // Agregar el usuario a la lista de usuarios
-    this._userService.agregar_usuario(this.perfilUsuario);
-    this.router.navigate(['login']);
+    // Subir el usuario, rol y perfil a la base de datos
+    this._userService.createUser(this.user).subscribe({
+      next: (userResponse) => {
+        console.log('Usuario creado:', userResponse);
+
+        // Subir perfil de usuario a la BD
+        this._usuarioService.createUsuario(this.perfilUsuario).subscribe({
+          next: (perfilResponse) => {
+            console.log('Perfil de usuario creado:', perfilResponse);
+
+            // Redirigir al usuario a la página de login
+            this.router.navigate(['login']);
+          },
+          error: (error) => {
+            console.error('Error al crear perfil de usuario:', error);
+            this.showAlert('ERROR', 'Error al crear el perfil de usuario. Inténtalo nuevamente.');
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error al crear rol:', error);
+        this.showAlert('ERROR', 'Error al crear el rol del usuario. Inténtalo nuevamente.');
+      }
+    });
   }
 
-  irLogin(){
+  irLogin() {
     this.router.navigate(['login']);
   }
 }

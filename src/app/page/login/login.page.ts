@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ServiceUserService } from 'src/app/api/service-user/service-user.service';
+import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 import { AuthService } from 'src/app/api/service-auth/auth.service';
-import { PerfilUsuario } from 'src/app/models/perfil-usuario';
-import { User } from 'src/app/models/user';
 import { AlertController } from '@ionic/angular';
-
+import { User } from 'src/app/models/user';
+import { PerfilUsuario } from 'src/app/models/perfil-usuario';
+import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
 
 @Component({
   selector: 'app-login',
@@ -14,39 +14,37 @@ import { AlertController } from '@ionic/angular';
 })
 export class LoginPage {
 
-  perfilUsuario: PerfilUsuario = {
-    user: {
-      usuario: "",
-      password: ""
-    },
-    rol: {
-      id: 0,
-      nombre: ""
-    },
-    nombre: "",
-    apellido: "",
-    correo: "",
-    telefono: ""
-  }
-
   user: User = {
-    usuario: "",
-    password: ""
-  }
+    usuario: '',
+    password: ''
+  };
 
-  constructor(private _userService: ServiceUserService, private router: Router, private authService: AuthService, private alertController: AlertController) { }
+  usuario: PerfilUsuario = {
+    nombre: '',
+    correo: '',
+    apellido: '',
+    telefono: ''
+  };
+
+  constructor(
+    private _userService: ServiceUserService,
+    private router: Router,
+    private authService: AuthService,
+    private alertController: AlertController,
+    private _usuarioService: ServiceUsuarioService
+  ) { }
 
   ngOnInit() {
-    this.limpiar()
+    this.limpiar();
   }
 
-  //función para limpiar los campos
+  // Función para limpiar los campos
   limpiar() {
     this.user.password = "";
     this.user.usuario = "";
   }
 
-  //Se crea el popup de error usuario no existe
+  // Se crea el popup de error usuario no existe
   private async showAlert(header: string, message: string) {
     const alert = await this.alertController.create({
       header,
@@ -56,33 +54,73 @@ export class LoginPage {
     await alert.present();
   }
 
-  //La función recibe el user (usuario y password) como parámetro desde el html
-  login(user: User) {
-    //Se encripta la contraseña
-    const hashedPassword = this.authService.encryptPassword(user.password);
-    console.log('Contraseña encriptada:', hashedPassword);
-    user.password = hashedPassword;
-    //La función retorna el usuario de tipo PerfilUsuario encontrado o uno con atributos vacíos en caso de no existir.
-    this.perfilUsuario = this._userService.encontrar_usuario(user);
-    if (this.perfilUsuario.user.usuario.length > 0 && this.perfilUsuario.user.password.length > 0) {
-      console.info("el usuario existe");
-      console.info(this.perfilUsuario);
-      this.limpiar();
-      //Se redirecciona a la página home enviando el usuario de tipo PerfilUsuario con todos sus atributos
-      this.router.navigate(['home'], {
-        state: {
-          user: this.perfilUsuario
+
+  // Método para iniciar sesión
+  login(usuario: string, password: string) {
+    const hashedPassword = this.hash(password); // Encripta la contraseña
+    this._userService.login(usuario).subscribe({
+      next: (response) => {
+
+        const user = response.body[0];
+
+        if (hashedPassword == user.password) {
+
+          const ID_user = user.id_user
+
+          if (ID_user) {
+            this.cargarPerfil(ID_user); // Llama a cargarPerfil con ID_user
+            // Redireccionar a la página home
+            this.router.navigate(['home'], {
+              state: {
+                user: user.usuario
+              }
+            });
+          } else {
+            console.error("El usuario no existe")
+            this.showAlert("Error", "Vuelva a ingresar usuario y contraseña")//usuario no existe
+            this.limpiar();
+          }
+        } else {
+          console.error("Contraseña no coincide")
+          this.showAlert("Error", "Vuelva a ingresar usuario y contraseña")//contraseña no coincide
+          this.limpiar();
         }
-      })
-    } else {
-      console.error("el usuario no existe")
-      this.limpiar();
-      this.showAlert('ERROR', 'Vuelva a ingresar usuario y contraseña');
-    }
+      },
+      error: (err) => {
+        console.error("Error en la solicitud", err);
+        this.showAlert("Error", "Ocurrió un problema al iniciar sesión. Intente nuevamente más tarde.");
+      }
+    })
+  };
+
+  // Busca el perfil desde una ID
+  cargarPerfil(userId: number) {
+    this._usuarioService.getUsuarioById(userId).subscribe({
+      next: (response) => {
+        console.log(response.body)
+        if (response.body) {
+          this.usuario = response.body; // Asigna el perfil del usuario
+        } else {
+          console.warn('No se encontró el perfil del usuario');
+          this.showAlert('ERROR', 'Perfil del usuario no encontrado.');
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar el perfil del usuario', err);
+        this.showAlert('ERROR', 'No se pudo cargar el perfil del usuario.');
+      }
+    });
   }
 
-  IrRegistro() {
-    this.router.navigate(['registro'])
+  //encriptar contraseña 
+  hash(password: string) {
+    const hashedPassword = this.authService.encryptPassword(password);
+    console.log('Contraseña encriptada:', hashedPassword);
+    return password = hashedPassword;
+  }
+
+  irRegistro() {
+    this.router.navigate(['registro']);
   }
 
 }

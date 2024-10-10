@@ -3,15 +3,18 @@
     <div class="login">
       <h1>Login</h1>
       <div class="inputs">
-        <!--Se obtiene el usuario ingresado y se le asigna al user-->
+        <!-- Se obtiene el usuario ingresado y se le asigna al user -->
         <label for="Usuario">Usuario</label>
         <input [(ngModel)]="user.usuario" label="Usuario" placeholder="">
-        <!--Se obtiene la password ingresada y se le asigna al user-->
-        <label for="Contraseña">Contraseña</label>
+
+        <!-- Se obtiene la password ingresada y se le asigna al user -->
+        <label for="Password">Contraseña</label>
         <input [(ngModel)]="user.password" label="Contraseña" type="password" value="">
-        <!--El user se entrega por parámetro a la función login()-->
-        <button id="button-ingresar" (click)="login(user)"> Ingresar </button>
-        <a (click)="IrRegistro()"> ¿no tienes una cuenta?</a>
+
+        <!-- El user se entrega por parámetro a la función login() -->
+        <button id="button-ingresar" (click)="login(user.usuario, user.password)"> Ingresar </button>
+
+        <a (click)="irRegistro()"> ¿no tienes una cuenta?</a>
       </div>
     </div>
   </div>
