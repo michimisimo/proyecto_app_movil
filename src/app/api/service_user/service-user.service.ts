@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { ServiceApiConfigService } from '../service-api-config/service-api-config.service';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { User } from 'src/app/models/user/user';
+import { GetUser } from 'src/app/models/user/get_user';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +18,8 @@ export class ServiceUserService {
   }
 
   //buscar user
-  getUsers(): Observable<HttpResponse<any>> {
-    return this.apiService.get('users'); // Llama al método get del servicio de configuración
+  getUsers(): Observable<HttpResponse<GetUser[]>> {
+    return this.apiService.get<GetUser[]>('users'); // Llama al método get del servicio de configuración
   }
 
   getUserById(id: string): Observable<HttpResponse<any>> {

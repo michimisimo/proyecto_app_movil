@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 import { AuthService } from 'src/app/api/service-auth/auth.service';
 import { AlertController } from '@ionic/angular';
-import { User } from 'src/app/models/user';
+import { User } from 'src/app/models/user/user';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
 import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
 
@@ -70,9 +70,10 @@ export class LoginPage {
           if (ID_user) {
             this.cargarPerfil(ID_user); // Llama a cargarPerfil con ID_user
             // Redireccionar a la página home
+            console.log("Antes de enviar de login a home"+JSON.stringify(user))
             this.router.navigate(['home'], {
               state: {
-                user: user.usuario
+                user: user
               }
             });
           } else {

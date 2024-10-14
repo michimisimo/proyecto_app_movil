@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/api/service-auth/auth.service';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
-import { User } from 'src/app/models/user';
+import { User } from 'src/app/models/user/user';
 import { Rol } from 'src/app/models/rol';
 import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 import { Router } from '@angular/router';
@@ -10,6 +10,8 @@ import { Injectable } from '@angular/core';
 import { ErrorPerfilUsuario } from 'src/app/models/error-perfil-usuario';
 import { validarPerfilUsuario } from 'src/app/utils/validacion/valid-registro';
 import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
+import { GetUser } from 'src/app/models/user/get_user';
+
 
 @Injectable({
   providedIn: 'root',
@@ -27,12 +29,20 @@ export class RegistroPage {
     password: ''
   }
 
+  createUser: User = {
+    usuario: '',
+    password: ''
+  }
+
   perfilUsuario: PerfilUsuario = {
     nombre: "",
     apellido: "",
     correo: "",
     telefono: "",
+    id_user: 0
   }
+
+  usersList: GetUser[] = []
 
   error: ErrorPerfilUsuario = {};
 
@@ -69,7 +79,6 @@ export class RegistroPage {
   }
 
   registrar() {
-
     // Selección de inputs por nombre
     const inputUsuario = document.getElementsByName('username')[0] as HTMLInputElement;
     const inputPassword = document.getElementsByName('password')[0] as HTMLInputElement;
@@ -101,24 +110,41 @@ export class RegistroPage {
     // Encriptar la contraseña
     const hashedPassword = this.authService.encryptPassword(this.user.password);
     console.log('Contraseña encriptada:', hashedPassword);
-    this.user.password = hashedPassword;
+    this.createUser.password = hashedPassword;
 
     // Subir el usuario, rol y perfil a la base de datos
-    this._userService.createUser(this.user).subscribe({
+    this.createUser.usuario = this.user.usuario;
+    this._userService.createUser(this.createUser).subscribe({
       next: (userResponse) => {
         console.log('Usuario creado:', userResponse);
 
-        // Subir perfil de usuario a la BD
-        this._usuarioService.createUsuario(this.perfilUsuario).subscribe({
-          next: (perfilResponse) => {
-            console.log('Perfil de usuario creado:', perfilResponse);
+        // Obtener ID del usuario recién creado
+        this._userService.getUsers().subscribe({
+          next: response => {
+            if (response.body !== null) {
+              this.usersList = response.body;
+              const userId = this.usersList[this.usersList.length - 1].id_user;
+              this.perfilUsuario.id_user = userId;
+              console.log("Después de obtener el ID" + JSON.stringify(this.perfilUsuario));
 
-            // Redirigir al usuario a la página de login
-            this.router.navigate(['login']);
+              // Subir perfil de usuario a la BD
+              console.log("Antes de POST " + JSON.stringify(this.perfilUsuario));
+              this._usuarioService.createUsuario(this.perfilUsuario).subscribe({
+                next: (perfilResponse) => {
+                  console.log('Perfil de usuario creado:', perfilResponse);
+                  // Redirigir al usuario a la página de login
+                  this.limpiar();
+                  this.router.navigate(['login']);
+                },
+                error: (error) => {
+                  console.error('Error al crear perfil de usuario:', error);
+                  this.showAlert('ERROR', 'Error al crear el perfil de usuario. Inténtalo nuevamente.');
+                }
+              });
+            }
           },
           error: (error) => {
-            console.error('Error al crear perfil de usuario:', error);
-            this.showAlert('ERROR', 'Error al crear el perfil de usuario. Inténtalo nuevamente.');
+            console.error('Error al obtener el usuario:', error);
           }
         });
       },
@@ -128,6 +154,7 @@ export class RegistroPage {
       }
     });
   }
+
 
   irLogin() {
     this.router.navigate(['login']);

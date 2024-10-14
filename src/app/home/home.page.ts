@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '../models/user';
+import { User } from '../models/user/user';
 import { PerfilUsuario } from '../models/perfil-usuario';
 
 @Component({
@@ -22,6 +22,7 @@ export class HomePage {
 
   verPerfil() {
     //Se redirecciona a la página perfil-usuario enviando el usuario
+    console.log("Antes de enviar de home a perfil"+JSON.stringify(this.user))
     this.router.navigate(['perfil-usuario'], {
       state: {
         usuario: this.user

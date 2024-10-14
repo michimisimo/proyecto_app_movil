@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ServiceApiConfigService } from '../service-api-config/service-api-config.service';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Rol } from 'src/app/models/rol';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,10 @@ export class ServiceRolService {
   //buscar user
   getRol(): Observable<HttpResponse<any>> {
     return this.apiService.get('rol'); // Llama al método get del servicio de configuración
+  }
+
+  getRolById(id: number): Observable<HttpResponse<Rol[]>> {
+    return this.apiService.get<Rol[]>(`rol?id=eq.${id}&select=*`); // Llama al método get para un rol específico
   }
 
   createRol(data: any): Observable<HttpResponse<any>> {

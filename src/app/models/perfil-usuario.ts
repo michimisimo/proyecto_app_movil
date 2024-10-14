@@ -3,4 +3,6 @@ export interface PerfilUsuario {
     correo: string,
     apellido: string;
     telefono: string;
+    id_user?: number;
+    ID_rol?: number;
 }

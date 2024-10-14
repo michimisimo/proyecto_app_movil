@@ -1,5 +1,5 @@
 import { PerfilUsuario } from "src/app/models/perfil-usuario";
-import { User } from "src/app/models/user";
+import { User } from "src/app/models/user/user";
 import { ErrorPerfilUsuario } from "src/app/models/error-perfil-usuario";
 import { aplicarEstilos } from 'src/app/utils/validacion/valid-campo';
 import { validarCampoVacio } from 'src/app/utils/validacion/valid-campo';
