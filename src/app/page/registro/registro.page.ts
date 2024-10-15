@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/api/service-auth/auth.service';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
-import { User } from 'src/app/models/user/user';
-import { Rol } from 'src/app/models/rol';
+import { User } from 'src/app/models/user';
 import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
@@ -10,7 +9,6 @@ import { Injectable } from '@angular/core';
 import { ErrorPerfilUsuario } from 'src/app/models/error-perfil-usuario';
 import { validarPerfilUsuario } from 'src/app/utils/validacion/valid-registro';
 import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
-import { GetUser } from 'src/app/models/user/get_user';
 
 
 @Injectable({
@@ -42,7 +40,7 @@ export class RegistroPage {
     id_user: 0
   }
 
-  usersList: GetUser[] = []
+  usersList: User[] = []
 
   error: ErrorPerfilUsuario = {};
 

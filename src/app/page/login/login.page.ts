@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 import { AuthService } from 'src/app/api/service-auth/auth.service';
 import { AlertController } from '@ionic/angular';
-import { User } from 'src/app/models/user/user';
+import { User } from 'src/app/models/user';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
 import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
 
@@ -68,7 +68,6 @@ export class LoginPage {
           const ID_user = user.id_user
 
           if (ID_user) {
-            this.cargarPerfil(ID_user); // Llama a cargarPerfil con ID_user
             // Redireccionar a la página home
             console.log("Antes de enviar de login a home"+JSON.stringify(user))
             this.router.navigate(['home'], {
@@ -93,25 +92,6 @@ export class LoginPage {
       }
     })
   };
-
-  // Busca el perfil desde una ID
-  cargarPerfil(userId: number) {
-    this._usuarioService.getUsuarioById(userId).subscribe({
-      next: (response) => {
-        console.log(response.body)
-        if (response.body) {
-          this.usuario = response.body; // Asigna el perfil del usuario
-        } else {
-          console.warn('No se encontró el perfil del usuario');
-          this.showAlert('ERROR', 'Perfil del usuario no encontrado.');
-        }
-      },
-      error: (err) => {
-        console.error('Error al cargar el perfil del usuario', err);
-        this.showAlert('ERROR', 'No se pudo cargar el perfil del usuario.');
-      }
-    });
-  }
 
   //encriptar contraseña 
   hash(password: string) {

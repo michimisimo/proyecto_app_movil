@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '../models/user/user';
-import { PerfilUsuario } from '../models/perfil-usuario';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-home',
@@ -10,7 +9,7 @@ import { PerfilUsuario } from '../models/perfil-usuario';
 })
 export class HomePage {
 
-  user!: PerfilUsuario;
+  user!: User;
 
   constructor(private router: Router) { }
 

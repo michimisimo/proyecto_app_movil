@@ -1,5 +1,4 @@
 import { ErrorPerfilUsuario } from "src/app/models/error-perfil-usuario";
-import { PerfilUsuario } from "src/app/models/perfil-usuario";
 import { aplicarEstilos} from 'src/app/utils/validacion/valid-campo';
 
 export function validarLongitudUsuario(usuario:string, error: ErrorPerfilUsuario, inputUsuario: HTMLInputElement){
