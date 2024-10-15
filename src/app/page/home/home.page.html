@@ -1,22 +1,54 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Home
-    </ion-title>
+    <ion-title>Home</ion-title>
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Home</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-menu side="end" contentId="main-content" menuId="first" persistent="false" swipeEnabled="true">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Menú</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-list>
+        <ion-item button (click)="verPerfil()">Ver Perfil</ion-item>
+        <ion-item button>Crear Evento</ion-item>
+        <ion-item button>Mis Eventos</ion-item>
+        <ion-item button>Contactos</ion-item>
+        <ion-item button>Configuración</ion-item>
+        <ion-item button>Ayuda</ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
 
-  <div id="container">
-    <!--Al presionar el botón se llama a la función verPerfil() de home.page.ts-->
-    <ion-button id="button-ver-perfil" (click)="verPerfil()">Ver Perfil</ion-button>
-    <ion-button id="button-ver-perfil">Crear evento</ion-button>
-    <ion-button id="button-ver-perfil">Mis eventos</ion-button>
+  <div class="ion-page" id="main-content">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title></ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <div>
+        <ion-card>
+          <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+          <ion-card-header>
+            <ion-card-title>Card Title</ion-card-title>
+            <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+          </ion-card-header>
+        
+          <ion-card-content>
+            Here's a small text description for the card content. Nothing more, nothing less.
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <div id="container">
+        <ion-button id="crear-evento-button"fill="outline">+ Crear Evento</ion-button>
+      </div>
+    </ion-content>
   </div>
 </ion-content>
