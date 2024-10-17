@@ -11,7 +11,7 @@ export class ServiceRolService {
 
   constructor(private apiService: ServiceApiConfigService) { }
 
-  //buscar user
+  //buscar rol
   getRol(): Observable<HttpResponse<any>> {
     return this.apiService.get('rol'); // Llama al método get del servicio de configuración
   }
