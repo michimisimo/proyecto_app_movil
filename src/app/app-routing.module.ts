@@ -27,6 +27,10 @@ const routes: Routes = [
         m => m.HomePageModule)
   },
   {
+    path: 'contactos',
+    loadChildren: () => import('./page/contactos/contactos.module').then( m => m.ContactosPageModule)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
