@@ -16,6 +16,14 @@ export class ServiceUserService {
   
   constructor(private apiService: ServiceApiConfigService) { }
 
+  setUser(user: User) {
+    this.userSubject.next(user);
+  }
+
+  clearUser() {
+    this.userSubject.next(null);
+  }
+
   // Método para hacer login
   login(usuario: string): Observable<HttpResponse<any>> {
     return this.apiService.get(`users?usuario=eq.${usuario}&select=*`);
@@ -42,12 +50,6 @@ export class ServiceUserService {
     return this.apiService.delete(`users/${id}`); // Llama al método delete para eliminar un usuario
   }
 
-  setUser(user: User) {
-    this.userSubject.next(user);
-  }
-
-  clearUser() {
-    this.userSubject.next(null);
-  }
+ 
 
 }
