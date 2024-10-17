@@ -1,12 +1,19 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="irHome()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end"> 
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-title>Mi Perfil</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  
-  <div class="contenedor">
+  <div class="contenedor" *ngIf="!isLoading; else loadingTemplate">
     <div class="info">
       <div class="datos">
         <div class="perfil">
@@ -42,4 +49,10 @@
     </div>
   </div>
   
+  <ng-template #loadingTemplate>
+    <div class="loader">
+      <ion-spinner name="bubbles"></ion-spinner> 
+      <p>Cargando...</p>
+    </div>
+  </ng-template>
 </ion-content>

@@ -5,6 +5,7 @@ import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuar
 import { ServiceRolService } from 'src/app/api/service_rol/service-rol.service';
 import { Rol } from 'src/app/models/rol';
 import { User } from 'src/app/models/user';
+import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -13,7 +14,7 @@ import { User } from 'src/app/models/user';
 })
 export class PerfilUsuarioPage implements OnInit {
 
-  user: User = {
+  user: User | null = {
     id_user:0,
     usuario: '',
     password: ''
@@ -33,41 +34,57 @@ export class PerfilUsuarioPage implements OnInit {
     nombre: ''
   };
 
-  constructor(private router: Router, private _usuarioService: ServiceUsuarioService, private _rolService : ServiceRolService) { }
+  isLoading: boolean = true;
+
+  constructor(private router: Router, private _usuarioService: ServiceUsuarioService, private _rolService : ServiceRolService, private _userService : ServiceUserService) { }
 
   ngOnInit() {
-    //Se obtiene el usuario enviado al navegar desde página login hacia home con la función login()
-    this.user = this.router.getCurrentNavigation()?.extras?.state?.['usuario'];
-    console.log("En perfil-usuario"+JSON.stringify(this.user));
+    //Se obtiene el user seteado en el User Service
+    this._userService.user$.subscribe(user => {
+      this.user = user;
+      console.log('Usuario en perfil-usuario:', this.user);
+    });
+    //Se muestran los datos del perfil de usuario
     this.obtenerPerfilUsuario();
-    
-    
   }
 
   async obtenerPerfilUsuario(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (this.user.id_user){
+    this.isLoading = true; 
+    const loadingDelay = 2000;
+    const loadingPromise = new Promise(resolve => setTimeout(resolve, loadingDelay));
+  
+    return new Promise((resolve, reject) => {      
+      if (this.user!=null && this.user.id_user) {
         this._usuarioService.getUsuarioByIdUser(this.user.id_user).subscribe({
           next: (response) => {
             if (response.body != null) {
               this.perfilUsuario = response.body[0];
-              this.obtenerRolUsuario();
-              resolve();
+              this.obtenerRolUsuario().then(() => {               
+                return loadingPromise;
+              }).then(() => {
+                this.isLoading = false; 
+                resolve();
+              }).catch(err => reject(err));
             } else {
               reject('No se encontró el perfil del usuario');
             }
           },
-          error: (err) => reject(err)
+          error: (err) => {
+            this.isLoading = false; 
+            reject(err);
+          }
         });
-      } 
+      }else{
+        console.log("No se encontró el user")
+      }      
     });
   }
-
+  
   async obtenerRolUsuario(): Promise<void> {
     if (this.perfilUsuario.ID_rol) {
       this.rol.id = this.perfilUsuario.ID_rol;
       return new Promise((resolve, reject) => {
-        if (typeof this.perfilUsuario.ID_rol === "number"){
+        if (typeof this.perfilUsuario.ID_rol === "number") {
           this._rolService.getRolById(this.perfilUsuario.ID_rol).subscribe({
             next: (response) => {
               if (response.body != null) {
