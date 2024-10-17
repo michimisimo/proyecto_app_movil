@@ -1,3 +1,21 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="end" contentId="main-content" menuId="first" persistent="false" swipeEnabled="true">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Menú</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-list>
+        <ion-item button (click)="irVerPerfil()">Ver Perfil</ion-item>
+        <ion-item button >Crear Evento</ion-item>
+        <ion-item button >Mis Eventos</ion-item>
+        <ion-item button (click)="irContactos()">Contactos</ion-item>
+        <ion-item button >Configuración</ion-item>
+        <ion-item button >Ayuda</ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <ion-router-outlet id="main-content"></ion-router-outlet>
 </ion-app>
