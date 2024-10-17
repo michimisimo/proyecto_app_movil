@@ -1,4 +1,4 @@
-export interface compra_evento {
+export interface CompraEvento {
     ID_compra: number;
     descripcion: string;
     costo: number;

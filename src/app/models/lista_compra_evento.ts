@@ -1,4 +1,4 @@
-export interface lista_compra_evento {
+export interface ListaCompraEvento {
     ID_lista: number;
     nombre: string;
     descripcion: string;

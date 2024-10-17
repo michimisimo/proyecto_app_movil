@@ -1,4 +1,4 @@
-export interface invitacion_evento {
+export interface InvitacionEvento {
     ID_invitacion: number;
     ID_invitado: number;
     ID_evento: number;
