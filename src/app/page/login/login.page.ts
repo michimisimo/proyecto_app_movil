@@ -60,21 +60,13 @@ export class LoginPage {
     const hashedPassword = this.hash(password); // Encripta la contraseña
     this._userService.login(usuario).subscribe({
       next: (response) => {
-
         const user = response.body[0];
-
         if (hashedPassword == user.password) {
-
-          const ID_user = user.id_user
-
-          if (ID_user) {
+          if (user.id_user) {
+            // Se establece el user con setUser() en el User Service
+            this._userService.setUser(user);
             // Redireccionar a la página home
-            console.log("Antes de enviar de login a home"+JSON.stringify(user))
-            this.router.navigate(['home'], {
-              state: {
-                user: user
-              }
-            });
+            this.router.navigate(['home']);
           } else {
             console.error("El usuario no existe")
             this.showAlert("Error", "Vuelva a ingresar usuario y contraseña")//usuario no existe
