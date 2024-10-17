@@ -1,6 +1,6 @@
 export interface Amigo {
-    ID_amistad: number;
-    ID_persona1: number;
-    ID_persona2: number;
+    id_amistad: number;
+    id_persona1: number;
+    id_persona2: number;
     fecha_amistad: Date;
 }
