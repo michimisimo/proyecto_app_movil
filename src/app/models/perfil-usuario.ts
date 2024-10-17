@@ -4,6 +4,6 @@ export interface PerfilUsuario {
     apellido: string;
     telefono: string;
     id_user?: number;
-    ID_rol?: number;
+    id_rol?: number;
     id_persona?: number;
 }

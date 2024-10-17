@@ -8,7 +8,7 @@ import { AlertController } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import { ErrorPerfilUsuario } from 'src/app/models/error-perfil-usuario';
 import { validarPerfilUsuario } from 'src/app/utils/validacion/valid-registro';
-import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
+import { ServicePerfilUsuarioService } from 'src/app/api/service_perfil_usuario/service-perfil-usuario.service';
 
 
 @Injectable({
@@ -50,7 +50,7 @@ export class RegistroPage {
     private _userService: ServiceUserService,
     private router: Router,
     private alertController: AlertController,
-    private _usuarioService: ServiceUsuarioService) { }
+    private _perfilUsuarioService: ServicePerfilUsuarioService) { }
 
   ngOnInit(): void {
     this.limpiar();
@@ -127,7 +127,7 @@ export class RegistroPage {
 
               // Subir perfil de usuario a la BD
               console.log("Antes de POST " + JSON.stringify(this.perfilUsuario));
-              this._usuarioService.createUsuario(this.perfilUsuario).subscribe({
+              this._perfilUsuarioService.createPerfilUsuario(this.perfilUsuario).subscribe({
                 next: (perfilResponse) => {
                   console.log('Perfil de usuario creado:', perfilResponse);
                   // Redirigir al usuario a la página de login

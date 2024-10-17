@@ -5,7 +5,7 @@ import { AuthService } from 'src/app/api/service-auth/auth.service';
 import { AlertController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
-import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
+import { ServicePerfilUsuarioService } from 'src/app/api/service_perfil_usuario/service-perfil-usuario.service';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +31,7 @@ export class LoginPage {
     private router: Router,
     private authService: AuthService,
     private alertController: AlertController,
-    private _usuarioService: ServiceUsuarioService
+    private _perfilUsuarioService: ServicePerfilUsuarioService
   ) { }
 
   ngOnInit() {

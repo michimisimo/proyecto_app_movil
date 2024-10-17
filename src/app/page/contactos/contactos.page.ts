@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ServiceAmigosService } from 'src/app/api/service_amigos/service-amigos.service';
-import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
-import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
-import { Amigo } from 'src/app/models/amigo';
+import { ServiceAmigosService } from 'src/app/api/service_amistad/service-amistad.service';
+import { ServicePerfilUsuarioService } from 'src/app/api/service_perfil_usuario/service-perfil-usuario.service';
+import { Amistad } from 'src/app/models/amistad';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
-import { User } from 'src/app/models/user';
 
 @Component({
   selector: 'app-contactos',
@@ -13,12 +11,6 @@ import { User } from 'src/app/models/user';
   styleUrls: ['./contactos.page.scss'],
 })
 export class ContactosPage implements OnInit {
-
-  user: User | null = {
-    id_user:0,
-    usuario: '',
-    password: ''
-  };
 
   perfilUsuario: PerfilUsuario | null = {
     nombre: '',
@@ -29,22 +21,17 @@ export class ContactosPage implements OnInit {
 
   mostrarLista: string = 'todos';
 
-  listaAmistades: Amigo[] = []
+  listaAmistades: Amistad[] = []
 
-  listaContactos: Amigo[] = []
+  listaContactos: Amistad[] = []
 
   listaPerfiles: PerfilUsuario[] = [];
 
-  constructor(private _userService : ServiceUserService, private router : Router, private _amigoService : ServiceAmigosService, private _usuarioService : ServiceUsuarioService) { }
+  constructor(private router : Router, private _amigoService : ServiceAmigosService, private _perfilUsuarioService : ServicePerfilUsuarioService) { }
 
   ngOnInit() {
-    //Se obtiene el user seteado en el User Service
-    this._userService.user$.subscribe(user => {
-      this.user = user;
-      console.log('User en contactos:', this.user);
-    });
     //Se obtiene el usuario seteado en el Usuario Service
-    this._usuarioService.usuario$.subscribe(usuario => {
+    this._perfilUsuarioService.usuario$.subscribe(usuario => {
       this.perfilUsuario = usuario;
       console.log('Usuario en contactos:', this.perfilUsuario);
     });
@@ -68,16 +55,20 @@ export class ContactosPage implements OnInit {
     this.mostrarLista = 'agregar-contacto';
   }
 
+  //Obtiene lista de contactos de tipo Amistad[]
   obtenerContactos(){
     this._amigoService.getAmigo().subscribe({
       next: (response) => {
         if (response.body != null) {
+          //listaAmistades de tipo Amistad[], contiene todas las filas de la tabla Amistad.
           this.listaAmistades = response.body;
           const listaContactos = [];   
+          //Se recorre la lista de todas las amistades y se filtra por el id del perfil usuario logueado.
           for (let i = 0; i < this.listaAmistades.length; i++) {
             if(this.perfilUsuario){
               if (this.listaAmistades[i].id_persona1 == this.perfilUsuario.id_persona){
                 listaContactos.push(this.listaAmistades[i]);
+                //listaContactos contiene las filas de la tabla Amistad donde id_persona1 coincide con id del perfil usuario logueado.
                 this.listaContactos = listaContactos;
               }
             }            
@@ -95,24 +86,23 @@ export class ContactosPage implements OnInit {
     });
   }
 
-  obtenerPerfiles(listaContactos:Amigo[]){
+  //Obtiene lista de perfiles de tipo PerfilUsuario[] de los contactos
+  obtenerPerfiles(listaContactos:Amistad[]){
     const listaPerfiles: PerfilUsuario[] = [];
     for (let i = 0; i < listaContactos.length; i++) {
-      this._usuarioService.getUsuarioById(listaContactos[i].id_persona2).subscribe ({
+      this._perfilUsuarioService.getPerfilUsuarioById(listaContactos[i].id_persona2).subscribe ({
         next: (response) => {
           if(response.body){
             if (this.perfilUsuario){
               listaPerfiles.push(response.body[0]);
               this.listaPerfiles = listaPerfiles;            
-            }
-            
+            }            
           }else{
             console.log("No se encontraron perfiles para la lista de contactos")
           }
         }        
       });      
-    }
-    
+    }    
   }
 
   

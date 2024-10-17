@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { User } from '../../models/user';
 import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
-import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
+import { ServicePerfilUsuarioService } from 'src/app/api/service_perfil_usuario/service-perfil-usuario.service';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
 
 @Component({
@@ -24,7 +23,7 @@ export class HomePage implements OnInit {
     telefono: ''
   }
 
-  constructor(private router: Router, private _userService: ServiceUserService, private _usuarioService : ServiceUsuarioService) { }
+  constructor(private _userService: ServiceUserService, private _perfilUsuarioService : ServicePerfilUsuarioService) { }
 
   ngOnInit() {
     // Se obtiene el user seteado en el User Service
@@ -38,10 +37,10 @@ export class HomePage implements OnInit {
   async obtenerPerfilUsuario(): Promise<void> {
     if (this.user != null && this.user.id_user) {
       try {
-        const response = await this._usuarioService.getUsuarioByIdUser(this.user.id_user).toPromise();
+        const response = await this._perfilUsuarioService.getPerfilUsuarioByIdUser(this.user.id_user).toPromise();
         if (response && response.body != null) {
           this.perfilUsuario = response.body[0];
-          this._usuarioService.setUsuario(this.perfilUsuario);          
+          this._perfilUsuarioService.setPerfilUsuario(this.perfilUsuario);          
         } else {
           throw new Error('No se encontró el perfil del usuario');
         }

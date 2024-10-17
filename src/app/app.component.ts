@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ServiceUserService } from './api/service_user/service-user.service';
 import { MenuController } from '@ionic/angular';
 import { PerfilUsuario } from './models/perfil-usuario';
-import { ServiceUsuarioService } from './api/service_usuario/service-usuario.service';
+import { ServicePerfilUsuarioService } from './api/service_perfil_usuario/service-perfil-usuario.service';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +26,7 @@ export class AppComponent {
     telefono: ''
   }
   
-  constructor(private router: Router, private _userService : ServiceUserService, private menu: MenuController, private _usuarioService : ServiceUsuarioService) {}
+  constructor(private router: Router, private _userService : ServiceUserService, private menu: MenuController, private _perfilUsuarioService : ServicePerfilUsuarioService) {}
 
   ngOnInit() {
     this._userService.user$.subscribe(user => {
@@ -34,7 +34,7 @@ export class AppComponent {
       console.log('User en app components:', this.user);
     });
     //Se obtiene el usuario seteado en el Usuario Service
-    this._usuarioService.usuario$.subscribe(usuario => {
+    this._perfilUsuarioService.usuario$.subscribe(usuario => {
       this.usuario = usuario;
       console.log('Usuario en app components:', this.usuario);
     });

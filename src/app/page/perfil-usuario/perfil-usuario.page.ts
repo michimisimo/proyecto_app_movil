@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
 import { Router } from '@angular/router';
-import { ServiceUsuarioService } from 'src/app/api/service_usuario/service-usuario.service';
+import { ServicePerfilUsuarioService } from 'src/app/api/service_perfil_usuario/service-perfil-usuario.service';
 import { ServiceRolService } from 'src/app/api/service_rol/service-rol.service';
 import { Rol } from 'src/app/models/rol';
 import { User } from 'src/app/models/user';
-import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -26,7 +25,7 @@ export class PerfilUsuarioPage implements OnInit {
     correo: '',
     telefono: '',
     id_user: 0,
-    ID_rol: 0
+    id_rol: 0
   };
 
   rol: Rol = {
@@ -35,16 +34,11 @@ export class PerfilUsuarioPage implements OnInit {
   };
 
 
-  constructor(private router: Router, private _usuarioService: ServiceUsuarioService, private _rolService: ServiceRolService, private _userService: ServiceUserService) { }
+  constructor(private router: Router, private _perfilUsuarioService: ServicePerfilUsuarioService, private _rolService: ServiceRolService) { }
 
   ngOnInit() {
-    //Se obtiene el user seteado en el User Service
-    this._userService.user$.subscribe(user => {
-      this.user = user;
-      console.log('Usuario en perfil-usuario:', this.user);
-    });
     //Se obtiene el usuario seteado en el Usuario Service
-    this._usuarioService.usuario$.subscribe(usuario => {
+    this._perfilUsuarioService.usuario$.subscribe(usuario => {
       if(usuario){
         this.perfilUsuario = usuario;
       }      
@@ -54,12 +48,12 @@ export class PerfilUsuarioPage implements OnInit {
   }
 
   async obtenerRolUsuario(): Promise<void> {
-    if (this.perfilUsuario && this.perfilUsuario.ID_rol) {
-      this.rol.id = this.perfilUsuario.ID_rol;
+    if (this.perfilUsuario && this.perfilUsuario.id_rol) {
+      this.rol.id = this.perfilUsuario.id_rol;
       return new Promise((resolve, reject) => {
         if (this.perfilUsuario) {
-          if (typeof this.perfilUsuario.ID_rol === "number") {
-            this._rolService.getRolById(this.perfilUsuario.ID_rol).subscribe({
+          if (typeof this.perfilUsuario.id_rol === "number") {
+            this._rolService.getRolById(this.perfilUsuario.id_rol).subscribe({
               next: (response) => {
                 if (response.body != null) {
                   this.rol = response.body[0];
