@@ -1,33 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../../models/user';
+import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
+  user: User | null = {
+    id_user: 0,
+    usuario: '',
+    password: ''
+  };
 
-  user!: User;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private _userService: ServiceUserService) { }
 
   ngOnInit() {
-    //Se obtiene el usuario enviado al navegar desde página login hacia home con la función login()
-    this.user = this.router.getCurrentNavigation()?.extras?.state?.['user'];
-    console.info(this.user);
-  }
-
-  verPerfil() {
-    //Se redirecciona a la página perfil-usuario enviando el usuario
-    console.log("Antes de enviar de home a perfil"+JSON.stringify(this.user))
-    this.router.navigate(['perfil-usuario'], {
-      state: {
-        usuario: this.user
-      }
-    })
-
+    // Se obtiene el user seteado en el User Service
+    this._userService.user$.subscribe(user => {
+      this.user = user;
+      console.log('Usuario en home:', this.user);
+    });
   }
 
 }
