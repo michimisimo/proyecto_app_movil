@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ServiceApiConfigService } from '../service-api-config/service-api-config.service';
 import { HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from 'src/app/models/user';
 
 @Injectable({
@@ -9,6 +9,11 @@ import { User } from 'src/app/models/user';
 })
 export class ServiceUserService {
 
+  // Clase de RxJS (Reactive Extensions for JavaScript) que siempre tiene un valor actual
+  // Se establece y se limpia el valor a través de las funciones setUser() y clearUser()
+  private userSubject = new BehaviorSubject<User | null>(null);
+  user$ = this.userSubject.asObservable();
+  
   constructor(private apiService: ServiceApiConfigService) { }
 
   // Método para hacer login
@@ -35,6 +40,14 @@ export class ServiceUserService {
 
   deleteUser(id: string): Observable<HttpResponse<any>> {
     return this.apiService.delete(`users/${id}`); // Llama al método delete para eliminar un usuario
+  }
+
+  setUser(user: User) {
+    this.userSubject.next(user);
+  }
+
+  clearUser() {
+    this.userSubject.next(null);
   }
 
 }
