@@ -14,7 +14,7 @@ import { ServicePerfilUsuarioService } from './api/service_perfil_usuario/servic
 export class AppComponent {
 
   user: User | null = {
-    id_user:0,
+    id_user: 0,
     usuario: '',
     password: ''
   };
@@ -25,8 +25,8 @@ export class AppComponent {
     correo: '',
     telefono: ''
   }
-  
-  constructor(private router: Router, private _userService : ServiceUserService, private menu: MenuController, private _perfilUsuarioService : ServicePerfilUsuarioService) {}
+
+  constructor(private router: Router, private _userService: ServiceUserService, private menu: MenuController, private _perfilUsuarioService: ServicePerfilUsuarioService) { }
 
   ngOnInit() {
     this._userService.user$.subscribe(user => {
@@ -41,32 +41,32 @@ export class AppComponent {
   }
 
   irVerPerfil() {
-    this.menu.close(); 
+    this.menu.close();
     this.router.navigate(['perfil-usuario'])
   }
 
   irCrearEvento() {
-    this.menu.close(); 
-    //this.router.navigate(['/crear-evento']); 
+    this.menu.close();
+    this.router.navigate(['/crear-evento']);
   }
 
   irMisEventos() {
-    this.menu.close(); 
+    this.menu.close();
     //this.router.navigate(['/mis-eventos']); 
   }
 
-  irContactos(){
-    this.menu.close(); 
+  irContactos() {
+    this.menu.close();
     this.router.navigate(['contactos'])
   }
 
   irConfiguracion() {
-    this.menu.close(); 
+    this.menu.close();
     //this.router.navigate(['/configuracion']); 
   }
 
   irAyuda() {
-    this.menu.close(); 
+    this.menu.close();
     //this.router.navigate(['/ayuda']); 
   }
 }

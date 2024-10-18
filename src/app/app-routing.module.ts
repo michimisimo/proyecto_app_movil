@@ -34,7 +34,11 @@ const routes: Routes = [
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
+  },  {
+    path: 'crear-evento',
+    loadChildren: () => import('./page/crear-evento/crear-evento.module').then( m => m.CrearEventoPageModule)
   }
+
 ];
 
 @NgModule({
