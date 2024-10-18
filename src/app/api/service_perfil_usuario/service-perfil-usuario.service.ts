@@ -34,8 +34,8 @@ export class ServicePerfilUsuarioService {
   }
 
   //buscar user
-  getPerfilUsuario(): Observable<HttpResponse<any>> {
-    return this.apiService.get('perfil_usuario'); // Llama al método get del servicio de configuración
+  getPerfilUsuario(): Observable<HttpResponse<PerfilUsuario[]>> {
+    return this.apiService.get<PerfilUsuario[]>('perfil_usuario'); // Llama al método get del servicio de configuración
   }
 
   createPerfilUsuario(data: any): Observable<HttpResponse<PerfilUsuario>> {
