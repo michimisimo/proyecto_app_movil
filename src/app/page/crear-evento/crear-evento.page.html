@@ -15,7 +15,31 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">crear-evento</ion-title>
+      <ion-title size="large">Crear Evento</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <form (submit)="crearEvento()">
+    <ion-item>
+      <ion-label position="floating">Nombre del Evento</ion-label>
+      <ion-input type="text" [(ngModel)]="evento.nombre" name="nombre" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea [(ngModel)]="evento.descripcion" name="descripcion" required></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Fecha</ion-label>
+      <ion-input type="date" [(ngModel)]="evento.fecha" name="fecha" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Ubicación</ion-label>
+      <ion-input type="text" [(ngModel)]="evento.ubicacion" name="ubicacion" required></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" type="submit">Crear Evento</ion-button>
+  </form>
 </ion-content>
