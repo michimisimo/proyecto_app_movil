@@ -42,9 +42,13 @@ export class ServiceUserService {
     return this.apiService.post('users', data); // Llama al método post para crear un nuevo usuario
   }
 
-  updateUser(id: string, data: any): Observable<HttpResponse<any>> {
-    return this.apiService.patch(`users/${id}`, data); // Llama al método patch para actualizar un usuario
+  updateUser(id: string, data: any): Observable<HttpResponse<User>> {
+    return this.apiService.patch<User>(`users/${id}`, data); // Llama al método patch para actualizar un usuario
   }
+
+  updateUserPassword(id: string, data: any): Observable<HttpResponse<User>> {
+    return this.apiService.patch<User>(`users?id_user=eq.${id}`,data); // Llama al método patch para actualizar la contraseña de un usuario
+  }  
 
   deleteUser(id: string): Observable<HttpResponse<any>> {
     return this.apiService.delete(`users/${id}`); // Llama al método delete para eliminar un usuario
