@@ -21,7 +21,7 @@
 
   <ion-content class="ion-padding">
     <div>
-      <ion-card *ngFor="let evento of listaEventos">
+      <ion-card *ngFor="let evento of listaEventos" (click)="abrirEvento(evento)">
         <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
         <ion-card-header>
           <ion-card-title>{{evento.nombre}}</ion-card-title>
@@ -29,7 +29,8 @@
         </ion-card-header>
 
         <ion-card-content>
-          Ubicación: {{evento.ubicacion}}
+          Ubicación: {{evento.ubicacion}}<br>
+          Fecha: {{evento.fecha.toString()}}
         </ion-card-content>
       </ion-card>
     </div>
