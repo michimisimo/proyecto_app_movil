@@ -31,12 +31,17 @@ const routes: Routes = [
     loadChildren: () => import('./page/contactos/contactos.module').then( m => m.ContactosPageModule)
   },
   {
+    path: 'crear-evento',
+    loadChildren: () => import('./page/crear-evento/crear-evento.module').then( m => m.CrearEventoPageModule)
+  },
+  {
+    path: 'mis-eventos',
+    loadChildren: () => import('./page/mis-eventos/mis-eventos.module').then( m => m.MisEventosPageModule)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
-  },  {
-    path: 'crear-evento',
-    loadChildren: () => import('./page/crear-evento/crear-evento.module').then( m => m.CrearEventoPageModule)
   }
 
 ];

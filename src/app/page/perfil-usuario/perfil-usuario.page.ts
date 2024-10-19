@@ -49,7 +49,7 @@ export class PerfilUsuarioPage implements OnInit {
     // Se obtiene el user seteado en el User Service
     this._userService.user$.subscribe(user => {
       this.user = user;
-      console.log('User en home:', this.user);
+      console.log('User en perfil-usuario:', this.user);
     });
   }
 
