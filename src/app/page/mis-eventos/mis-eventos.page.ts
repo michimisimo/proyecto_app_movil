@@ -61,6 +61,10 @@ export class MisEventosPage implements OnInit {
     }    
   }
 
+  abrirEvento(evento : Evento){
+    this.router.navigate(['evento'], { state: { id: evento.id_evento?.toString() } });
+  }
+
   irHome() {
     this.router.navigate(['home']);
   }
