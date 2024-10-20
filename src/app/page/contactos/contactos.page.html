@@ -79,8 +79,12 @@
       <ion-item *ngFor="let perfil of listaPerfilesSolicitudes">
         <ion-label>{{ perfil.nombre }} {{ perfil.apellido }}</ion-label>
         <ion-button *ngIf="perfil.id_persona && !listaIdsSolicitudes.has(perfil.id_persona)"
-          (click)="agregarContacto(perfil.id_persona)">
+          (click)="aceptarSolicitud(perfil.id_persona)">
           Aceptar Solicitud
+        </ion-button>
+        <ion-button *ngIf="perfil.id_persona && !listaIdsSolicitudes.has(perfil.id_persona)"
+          (click)="rechazarSolicitud(perfil.id_persona)">
+          rechazar Solicitud
         </ion-button>
       </ion-item>
     </ion-list>
@@ -91,10 +95,15 @@
     <ion-list>
       <ion-item *ngFor="let perfil of listaPerfiles">
         <ion-label>{{ perfil.nombre }} {{ perfil.apellido }}</ion-label>
-        <ion-button *ngIf="perfil.id_persona && !listaIdsSolicitudes.has(perfil.id_persona)"
-          (click)="agregarContacto(perfil.id_persona)">
-          Enviar Solicitud
-        </ion-button>
+        <ng-container *ngIf="perfil.id_persona">
+          <ion-button *ngIf="!listaIdsSolicitudes.has(perfil.id_persona) && !isSolicitante(perfil.id_persona)"
+            (click)="agregarContacto(perfil.id_persona)">
+            Enviar Solicitud
+          </ion-button>
+          <ion-button *ngIf="isSolicitante(perfil.id_persona)" (click)="anularSolicitud(perfil.id_persona)">
+            Anular Solicitud
+          </ion-button>
+        </ng-container>
       </ion-item>
     </ion-list>
   </div>

@@ -25,6 +25,7 @@ export class ContactosPage implements OnInit {
   listaSolicitudes: SolicitudAmistad[] = [];
   listaPerfilesSolicitudes: PerfilUsuario[] = [];
   listaEventos: Evento[] = [];
+  listaAmistades: Amistad[] = [];
   listaIdsSolicitudes: Set<number> = new Set();
   eventoSeleccionado: number | null = null;
 
@@ -59,11 +60,23 @@ export class ContactosPage implements OnInit {
     if (vista === 'agregar-contacto') this.obtenerPerfiles();
   }
 
-  eliminarContacto(id: number) {
-  };
-
-  invitarEvento(id: number) {
-
+  eliminarContacto(id_contacto: number) {
+    const amistadId = this.obtenerIdAmistadPorContactoYPerfil(id_contacto, this.perfilUsuario?.id_persona!)
+    this._amigoService.deleteAmigo(amistadId!).subscribe({
+      next: (Response) => {
+        console.log('amistad eliminada');
+        const solicitudId = this.obtenerIdSolicitudPorPersona(id_contacto, this.perfilUsuario?.id_persona!)
+        this._solicitudAmistadService.deleteSolicitudAmistad(solicitudId!).subscribe({
+          next: (Response) => {
+            console.log('solicitud de amistad eliminada')
+            this.cargarDatosIniciales();
+          },
+          error: (error) =>
+            console.log('problema para eliminar la solicitud de amistad')
+        })
+      }, error: (error) =>
+        console.log('problema para eliminar la amistad')
+    });
   };
 
   obtenerContactos() {
@@ -77,9 +90,9 @@ export class ContactosPage implements OnInit {
     this._amigoService.getAmigoById(userId).subscribe({
       next: (response) => {
         console.log('lista amistades:', response)
-        const listaAmistades: Amistad[] = response.body || [];
+        this.listaAmistades = response.body || [];
         // Crear un array de observables para obtener los perfiles de los contactos
-        const contactosObservables = listaAmistades.map(amistad => {
+        const contactosObservables = this.listaAmistades.map(amistad => {
           // Determina el id_persona2 (el otro amigo) para obtener su perfil
           const idContacto = amistad.id_persona1 === userId ? amistad.id_persona2 : amistad.id_persona1;
           return this._perfilUsuarioService.getPerfilUsuarioById(idContacto);
@@ -116,16 +129,47 @@ export class ContactosPage implements OnInit {
     });
   }
 
+  obtenerIdAmistadPorContactoYPerfil(contactoId: number, perfilId: number): number | null {
+    // Recorre la lista de amistades para encontrar la amistad que involucra al contacto y al perfil
+    for (const amistad of this.listaAmistades) {
+      if (
+        (amistad.id_persona1 === contactoId && amistad.id_persona2 === perfilId) ||
+        (amistad.id_persona1 === perfilId && amistad.id_persona2 === contactoId)
+      ) {
+        return amistad.id_amistad; // Asumiendo que 'id_solicitud' es el ID de la amistad
+      }
+    }
+    return null; // Retorna null si no se encuentra la amistad
+  }
+
+  obtenerIdSolicitudPorPersona(persona1Id: number, persona2Id: number): number | null {
+    // Recorre la lista de solicitudes para encontrar la solicitud que involucra a las dos personas
+    for (const solicitud of this.listaSolicitudes) {
+      if (
+        (solicitud.id_solicitante === persona1Id && solicitud.id_destinatario === persona2Id) ||
+        (solicitud.id_solicitante === persona2Id && solicitud.id_destinatario === persona1Id)
+      ) {
+        return solicitud.id_solicitud!; // Asumiendo que 'id_solicitud' es el ID de la solicitud
+      }
+    }
+    return null; // Retorna null si no se encuentra la solicitud
+  }
+
+  isSolicitante(idPersona: number): boolean {
+    return this.listaSolicitudes.some(solicitud => solicitud.id_solicitante === this.perfilUsuario?.id_persona && solicitud.id_destinatario === idPersona);
+  }
+
+
   obtenerSolicitudes() {
     this._solicitudAmistadService.getSolicitudAmistadByIdUser(this.perfilUsuario?.id_persona!).subscribe({
       next: (response) => {
         // Vaciar las listas antes de comenzar a llenarlas
         this.listaSolicitudes = response.body || [];
+        this.listaSolicitudes = this.listaSolicitudes.filter(solicitud => solicitud.id_estado != 2);
         console.log('listaMisSolicitudes:', this.listaSolicitudes);
 
         // Actualizar la lista de IDs para controlar los que ya tienen solicitud
         this.actualizarListaIdsSolicitudes();
-
         // Obtener los perfiles relacionados a estas solicitudes
         this.obtenerPerfilesSolicitudes();
       },
@@ -175,17 +219,16 @@ export class ContactosPage implements OnInit {
   }
 
   obtenerPerfiles() {
-    this.listaPerfiles = [];
     this._perfilUsuarioService.getPerfilUsuario().subscribe({
       next: (response) => {
         this.listaPerfiles = (response.body || [])
           .filter(perfil => perfil.id_persona !== this.perfilUsuario?.id_persona) // Excluir el perfil del usuario actual
           .filter(perfil =>
             // Excluir perfiles que estén como id_solicitante o id_destinatario en alguna solicitud
-            !this.listaSolicitudes.some(s =>
-              s.id_solicitante === perfil.id_persona || s.id_destinatario === perfil.id_persona
-            )
-          );
+            !this.listaSolicitudes.some(s => s.id_solicitante === perfil.id_persona))
+          .filter(perfil =>
+            !this.listaContactos.some(c => c.id == perfil.id_persona)
+          )
       },
       error: console.error
     });
@@ -212,7 +255,37 @@ export class ContactosPage implements OnInit {
     });
   }
 
-  aceptarSolicitud(id_dest: number, id_sol: number) {
+  anularSolicitud(contactoId: number) {
+
+    console.log('idperfil', this.perfilUsuario?.id_persona)
+    console.log('idDestinatario', contactoId)
+
+    this._solicitudAmistadService.getSolicitudAmistadByIdUser(this.perfilUsuario?.id_persona!).subscribe({
+      next: (Response) => {
+        const listaSol = (Response.body || []);
+        console.log('todas las solicitudes', listaSol)
+        const solicitudesFiltradas = listaSol.filter(solicitud =>
+          solicitud.id_solicitante == this.perfilUsuario?.id_persona! &&
+          solicitud.id_destinatario == contactoId
+        );
+        console.log('solicitud filtrada:', solicitudesFiltradas);
+        this._solicitudAmistadService.updateEstado(solicitudesFiltradas[0].id_solicitante, solicitudesFiltradas[0].id_destinatario, 2).subscribe({
+          next: (Response) => {
+            console.log('solicitud anulada con exito')
+            this.cargarDatosIniciales();
+          },
+          error: (error) => {
+            console.log('error al anular solicitud')
+          }
+        })
+      },
+      error: (error) => {
+        console.log('error al obtener solicitud')
+      }
+    });
+  }
+
+  aceptarSolicitud(id_solicitante: number) {
     // Asegurarse de que perfilUsuario esté definido antes de continuar
     if (!this.perfilUsuario) {
       console.error('Perfil de usuario no definido.');
@@ -229,31 +302,57 @@ export class ContactosPage implements OnInit {
       return; // Salir si id_persona no es válido
     }
 
-    id_dest = idPersona;
-
     // Llamar al servicio para actualizar el estado de la solicitud
-    this._solicitudAmistadService.updateEstado(id_sol, id_dest, 1).subscribe({
+    this._solicitudAmistadService.updateEstado(id_solicitante, idPersona, 1).subscribe({
       next: (response) => {
         console.log('Solicitud de amistad aceptada con éxito:', response);
         const amistadData = {
-          id_persona1: id_sol, // Asigna el id del solicitante
-          id_persona2: id_dest // Asigna el id del destinatario
+          id_persona1: id_solicitante, // Asigna el id del solicitante
+          id_persona2: idPersona // Asigna el id del destinatario
         };
 
         this._amigoService.createAmigo(amistadData).subscribe({
           next: (response) => {
             console.log('Amistad creada:', response);
+            this.cargarDatosIniciales();
           },
           error: (err) => {
             console.error('Error al crear amistad', err);
           }
         });
-
-        this.cargarDatosIniciales()
       },
       error: (err) => {
         console.error('Error al aceptar la solicitud:', err);
         // Manejar el error según sea necesario
+      }
+    });
+  }
+
+  rechazarSolicitud(id_sol: number) {
+    // Asegurarse de que perfilUsuario esté definido antes de continuar
+    if (!this.perfilUsuario) {
+      console.error('Perfil de usuario no definido.');
+      return; // Salir si no hay perfil de usuario
+    }
+    console.log()
+
+    // Convertir id_persona a número entero de manera segura
+    const idPersona = parseInt(this.perfilUsuario.id_persona?.toString() || '0', 10);
+    console.log(idPersona)
+    // Verificar que se haya obtenido un id_persona válido
+    if (isNaN(idPersona) || idPersona <= 0) {
+      console.error('ID de persona no válido:', idPersona);
+      return; // Salir si id_persona no es válido
+    }
+
+    // Llamar al servicio para actualizar el estado de la solicitud
+    this._solicitudAmistadService.updateEstado(id_sol, idPersona, 2).subscribe({
+      next: (response) => {
+        console.log('Solicitud de amistad rechazada con éxito:', response);
+        this.cargarDatosIniciales()
+      },
+      error: (err) => {
+        console.error('Error al rechazar la solicitud:', err);
       }
     });
   }

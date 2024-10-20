@@ -34,18 +34,18 @@ export class SolicitudAmistadService {
   }
 
   // Método para actualizar una solicitud de amistad
-  updateSolicitudAmistad(id: string, data: any): Observable<HttpResponse<any>> {
-    return this.apiService.patch(`solicitud_amistad/${id}`, data); // Llama al método patch para actualizar una solicitud
+  updateSolicitudAmistad(id: number, data: any): Observable<HttpResponse<any>> {
+    return this.apiService.patch(`solicitud_amistad/${id}`, data);
   }
 
   // Método para eliminar una solicitud de amistad
-  deleteSolicitudAmistad(id: string): Observable<HttpResponse<any>> {
-    return this.apiService.delete(`solicitud_amistad/${id}`); // Llama al método delete para eliminar una solicitud
+  deleteSolicitudAmistad(id: number): Observable<HttpResponse<any>> {
+    return this.apiService.delete(`solicitud_amistad?id_solicitud=eq.${id}`); // Llama al método delete para eliminar una solicitud
   }
 
   updateEstado(id_sol: number, id_dest: number, id_estado: number): Observable<HttpResponse<any>> {
     // Prepara los datos para la actualización
-    const data = { id_estado }; // Asigna el nuevo estado al objeto data
+    const data = { id_estado: id_estado }; // Asigna el nuevo estado al objeto data
 
     // Construye la URL para la actualización, utilizando las variables
     const url = `solicitud_amistad?id_destinatario=eq.${id_dest}&id_solicitante=eq.${id_sol}`;

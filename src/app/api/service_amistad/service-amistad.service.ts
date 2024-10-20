@@ -27,7 +27,7 @@ export class ServiceAmigosService {
     return this.apiService.patch(`amistad/${id}`, data); // Llama al método patch para actualizar un amigo
   }
 
-  deleteAmigo(id: string): Observable<HttpResponse<any>> {
-    return this.apiService.delete(`amistad/${id}`); // Llama al método delete para eliminar un amigo
+  deleteAmigo(id: number): Observable<HttpResponse<any>> {
+    return this.apiService.delete(`amistad?id_amistad=eq.${id}`); // Llama al método delete para eliminar un amigo
   }
 }
