@@ -5,7 +5,7 @@
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-buttons slot="end"> 
+    <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Contactos</ion-title>
@@ -21,21 +21,18 @@
 
   <div id="top-buttons">
     <ion-buttons>
-      <ion-button 
-        [ngClass]="{'selected': mostrarLista === 'contactos'}" 
-        (click)="mostrarContactos()">Contactos
+      <ion-button [ngClass]="{'selected': mostrarLista === 'contactos'}" (click)="cambiarVista('contactos')">Contactos
       </ion-button>
-      <ion-button 
-        [ngClass]="{'selected': mostrarLista === 'solicitudes'}" 
-        (click)="mostrarSolicitudes()">Solicitudes
+      <ion-button [ngClass]="{'selected': mostrarLista === 'solicitudes'}"
+        (click)="cambiarVista('solicitudes')">Solicitudes
       </ion-button>
-      <ion-button 
-        [ngClass]="{'selected': mostrarLista === 'agregar-contacto'}" 
-        (click)="mostrarAgregarContacto()">Agregar
+      <ion-button [ngClass]="{'selected': mostrarLista === 'agregar-contacto'}"
+        (click)="cambiarVista('agregar-contacto')">Agregar
       </ion-button>
     </ion-buttons>
   </div>
 
+  <!-- Lista de Contactos -->
   <div *ngIf="mostrarLista === 'contactos'">
     <ion-list>
       <ion-item *ngFor="let contacto of listaContactos">
@@ -44,19 +41,26 @@
     </ion-list>
   </div>
 
-   <div *ngIf="mostrarLista === 'solicitudes'">
+  <!-- Lista de Solicitudes de Amistad -->
+  <div *ngIf="mostrarLista === 'solicitudes'">
     <ion-list>
       <ion-item *ngFor="let perfil of listaPerfilesSolicitudes">
         <ion-label>{{ perfil.nombre }} {{ perfil.apellido }}</ion-label>
+        <ion-button *ngIf="perfil.id_persona && !listaIdsSolicitudes.has(perfil.id_persona)"
+          (click)="agregarContacto(perfil.id_persona)">
+          Enviar Solicitud
+        </ion-button>
       </ion-item>
     </ion-list>
   </div>
 
+  <!-- Lista de Perfiles para Agregar como Contacto -->
   <div *ngIf="mostrarLista === 'agregar-contacto'">
     <ion-list>
       <ion-item *ngFor="let perfil of listaPerfiles">
         <ion-label>{{ perfil.nombre }} {{ perfil.apellido }}</ion-label>
-        <ion-button *ngIf="perfil.id_persona && !listaIdsSolicitudes.has(perfil.id_persona)" (click)="agregarContacto(perfil.id_persona)">
+        <ion-button *ngIf="perfil.id_persona && !listaIdsSolicitudes.has(perfil.id_persona)"
+          (click)="agregarContacto(perfil.id_persona)">
           Enviar Solicitud
         </ion-button>
       </ion-item>

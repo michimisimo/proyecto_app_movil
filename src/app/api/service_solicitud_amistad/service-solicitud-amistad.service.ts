@@ -11,7 +11,7 @@ import { SolicitudAmistad } from 'src/app/models/solicitud_amistad';
   providedIn: 'root'
 })
 export class SolicitudAmistadService {
-  constructor(private apiService: ServiceApiConfigService) {}
+  constructor(private apiService: ServiceApiConfigService) { }
 
   // Método para obtener una solicitud de amistad por su ID
   getSolicitudAmistadById(id: number): Observable<HttpResponse<SolicitudAmistad>> {
@@ -20,7 +20,7 @@ export class SolicitudAmistadService {
 
   // Método para obtener solicitudes de amistad por ID de usuario
   getSolicitudAmistadByIdUser(id: number): Observable<HttpResponse<SolicitudAmistad[]>> {
-    return this.apiService.get<SolicitudAmistad[]>(`solicitud_amistad?id_solicitante=eq.${id}&select=*`); // Llama al método get para solicitudes de un usuario específico
+    return this.apiService.get<SolicitudAmistad[]>(`solicitud_amistad?or=(id_solicitante.eq.${id},id_destinatario.eq.${id})&select=*`);
   }
 
   // Método para obtener todas las solicitudes de amistad
@@ -41,5 +41,16 @@ export class SolicitudAmistadService {
   // Método para eliminar una solicitud de amistad
   deleteSolicitudAmistad(id: string): Observable<HttpResponse<any>> {
     return this.apiService.delete(`solicitud_amistad/${id}`); // Llama al método delete para eliminar una solicitud
+  }
+
+  updateEstado(id_sol: number, id_dest: number, id_estado: number): Observable<HttpResponse<any>> {
+    // Prepara los datos para la actualización
+    const data = { id_estado }; // Asigna el nuevo estado al objeto data
+
+    // Construye la URL para la actualización, utilizando las variables
+    const url = `solicitud_amistad?id_destinatario=eq.${id_dest}&id_solicitante=eq.${id_sol}`;
+
+    // Llama al método PATCH para actualizar el estado del amigo
+    return this.apiService.patch(url, data);
   }
 }

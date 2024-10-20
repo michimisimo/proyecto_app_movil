@@ -16,7 +16,7 @@ export class ServiceAmigosService {
   }
 
   getAmigoById(id: number): Observable<HttpResponse<Amistad[]>> {
-    return this.apiService.get<Amistad[]>(`amistad?id=eq.${id}&select=*`); // Llama al método get para un amigo específico
+    return this.apiService.get<Amistad[]>(`amistad?or=(id_persona1.eq.${id},id_persona2.eq.${id})&select=*`);
   }
 
   createAmigo(data: any): Observable<HttpResponse<any>> {

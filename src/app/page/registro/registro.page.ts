@@ -121,8 +121,6 @@ export class RegistroPage {
           next: response => {
             if (response.body !== null) {
               this.usersList = response.body;
-              const userId = this.usersList[this.usersList.length - 1].id_user;
-              this.perfilUsuario.id_user = userId;
               console.log("Después de obtener el ID" + JSON.stringify(this.perfilUsuario));
 
               // Subir perfil de usuario a la BD
