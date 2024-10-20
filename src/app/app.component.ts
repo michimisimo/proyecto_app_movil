@@ -52,7 +52,7 @@ export class AppComponent {
 
   irMisEventos() {
     this.menu.close();
-    //this.router.navigate(['/mis-eventos']); 
+    this.router.navigate(['/mis-eventos']); 
   }
 
   irContactos() {

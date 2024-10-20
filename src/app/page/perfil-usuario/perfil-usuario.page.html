@@ -25,9 +25,6 @@
         <div class="email">
           <p>{{perfilUsuario.correo}}</p>
         </div>
-        <div class="Rol">
-          <p>Rol: {{rol.nombre}}</p>
-        </div>
         <div class="telefono">
           <p>Telefono: {{perfilUsuario.telefono}}</p>
         </div>
@@ -37,22 +34,15 @@
       <h3>Cambiar Contraseña</h3>
       <div class="inputs">
         <label for="Contraseña">Contraseña Actual</label>
-        <input id="password" type="password" label="Contraseña" value="">
+        <input id="password" type="password" [(ngModel)]="password" value="">
         <label for="Contraseña">Nueva Contraseña</label>
-        <input id="Npassword" type="password" label="NuevaContraseña" value="">
+        <input id="Npassword" type="password" [(ngModel)]="newPassword" value="">
         <label for="Contraseña">Confirmar Contraseña</label>
-        <input id="Rpassword" type="password" label="RepetirContraseña" value="">
-        <button id="CambiarContraseña"> Cambiar </button>
+        <input id="Rpassword" type="password" [(ngModel)]="repeatNewPassword" value="">
+        <button id="CambiarContraseña" (click)="cambiarPassword()"> Cambiar </button>
         <br>
         <button (click)="irHome()"> Volver</button>
       </div>
     </div>
   </div>
   
-  <ng-template #loadingTemplate>
-    <div class="loader">
-      <ion-spinner name="bubbles"></ion-spinner> 
-      <p>Cargando...</p>
-    </div>
-  </ng-template>
-</ion-content>

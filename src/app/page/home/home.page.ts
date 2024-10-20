@@ -3,6 +3,7 @@ import { User } from '../../models/user';
 import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 import { ServicePerfilUsuarioService } from 'src/app/api/service_perfil_usuario/service-perfil-usuario.service';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +24,10 @@ export class HomePage implements OnInit {
     telefono: ''
   }
 
-  constructor(private _userService: ServiceUserService, private _perfilUsuarioService : ServicePerfilUsuarioService) { }
+  constructor(
+    private _userService: ServiceUserService, 
+    private _perfilUsuarioService : ServicePerfilUsuarioService, 
+    private router : Router) { }
 
   ngOnInit() {
     // Se obtiene el user seteado en el User Service
@@ -50,6 +54,10 @@ export class HomePage implements OnInit {
     } else {
       console.log("No se encontró el user");
     }
+  }
+
+  irCrearEvento() {
+    this.router.navigate(['crear-evento']);
   }
 
 }
