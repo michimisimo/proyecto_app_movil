@@ -1,4 +1,4 @@
-export interface SolicitudAmistad{
+export interface SolicitudAmistad {
     id_solicitud?: number;
     id_estado: number;
     id_solicitante: number;

@@ -7,6 +7,10 @@ import { SolicitudAmistadService } from 'src/app/api/service_solicitud_amistad/s
 import { Amistad } from 'src/app/models/amistad';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
 import { SolicitudAmistad } from 'src/app/models/solicitud_amistad';
+import { Evento } from 'src/app/models/evento';
+import { ServiceEventoService } from 'src/app/api/service_evento/service-evento.service';
+import { ServiceInvitacionEventoService } from 'src/app/api/service_invitacion_evento/service-invitacion-evento.service';
+
 
 @Component({
   selector: 'app-contactos',
@@ -20,13 +24,17 @@ export class ContactosPage implements OnInit {
   listaPerfiles: PerfilUsuario[] = [];
   listaSolicitudes: SolicitudAmistad[] = [];
   listaPerfilesSolicitudes: PerfilUsuario[] = [];
+  listaEventos: Evento[] = [];
   listaIdsSolicitudes: Set<number> = new Set();
+  eventoSeleccionado: number | null = null;
 
   constructor(
     private router: Router,
     private _amigoService: ServiceAmigosService,
     private _perfilUsuarioService: ServicePerfilUsuarioService,
-    private _solicitudAmistadService: SolicitudAmistadService
+    private _solicitudAmistadService: SolicitudAmistadService,
+    private _eventoService: ServiceEventoService,
+    private _invitacionService: ServiceInvitacionEventoService,
   ) { }
 
   ngOnInit() {
@@ -51,6 +59,13 @@ export class ContactosPage implements OnInit {
     if (vista === 'agregar-contacto') this.obtenerPerfiles();
   }
 
+  eliminarContacto(id: number) {
+  };
+
+  invitarEvento(id: number) {
+
+  };
+
   obtenerContactos() {
     const userId = this.perfilUsuario?.id_persona!
 
@@ -58,7 +73,6 @@ export class ContactosPage implements OnInit {
       console.error('ID de usuario no válido.');
       return; // Salir si no hay ID de usuario
     }
-
     // Obtener las amistades del usuario
     this._amigoService.getAmigoById(userId).subscribe({
       next: (response) => {
@@ -130,7 +144,7 @@ export class ContactosPage implements OnInit {
     const observables = this.listaSolicitudes
       .filter(solicitud =>
         solicitud.id_destinatario === this.perfilUsuario?.id_persona &&
-        solicitud.id_estado !== 2 // Excluir solicitudes con id_estado igual a 2
+        solicitud.id_estado !== 2 && solicitud.id_estado !== 1// Excluir solicitudes con id_estado igual a 2
       )
       .map(solicitud => {
         console.log('Obteniendo perfil para solicitud:', solicitud);
@@ -218,7 +232,7 @@ export class ContactosPage implements OnInit {
     id_dest = idPersona;
 
     // Llamar al servicio para actualizar el estado de la solicitud
-    this._solicitudAmistadService.updateEstado(id_sol, id_dest, 2).subscribe({
+    this._solicitudAmistadService.updateEstado(id_sol, id_dest, 1).subscribe({
       next: (response) => {
         console.log('Solicitud de amistad aceptada con éxito:', response);
         const amistadData = {
@@ -243,5 +257,41 @@ export class ContactosPage implements OnInit {
       }
     });
   }
+
+  obtenerEventos() {
+    this._eventoService.getEventoByIdCreador(this.perfilUsuario?.id_persona!).subscribe({
+      next: (Response) => {
+        this.listaEventos = (Response.body || []);
+        console.log('mis eventos: ', this.listaEventos);
+      },
+      error: (err) => {
+        console.error('Error al obtener mis eventos', err);
+      }
+    });
+  }
+
+  invitarContacto(id_invitado: number, id_evento: number | null) {
+    console.log('id_contacto:', id_invitado, 'id_evento:', id_evento);
+    if (id_evento && id_invitado) {
+      const invitacionData = {
+        id_invitado: id_invitado,
+        id_evento: id_evento,
+        id_rol: 2,
+        id_estado: 3,
+      };
+
+      this._invitacionService.createInvitacion(invitacionData).subscribe({
+        next: (Response) => {
+          console.log('invitacion creada y enviada')
+        },
+        error: (err) => {
+          console.error('Error al crear la invitacion', err);
+        }
+      })
+    } else {
+      console.log('no se selecciono un evento')
+    }
+
+  };
 
 }

@@ -8,22 +8,34 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-content class="ion-padding">
-    <div>
-      <ion-card>
-        <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
-        <ion-card-header>
-          <ion-card-title>Card Title</ion-card-title>
-          <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        </ion-card-header>
+  <!-- lista invitaciones a eventos -->
+  <ion-accordion-group>
+    <ion-accordion value="first">
+      <ion-item slot="header" color="light">
+        <ion-label>Invitaciones a Eventos</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content" *ngFor="let invitacion of listaInvitaciones">
+        {{obtenerNombreEvento(invitacion.id_evento) }}
+        <ion-button (click)="aceptarInvitacion(invitacion.id_invitacion)">Aceptar</ion-button>
+        <ion-button (click)="rechazarInvitacion(invitacion.id_invitacion)">Rechazar</ion-button>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
 
-        <ion-card-content>
-          Here's a small text description for the card content. Nothing more, nothing less.
-        </ion-card-content>
-      </ion-card>
-    </div>
-    <div id="container">
-      <ion-button id="crear-evento-button" fill="outline" (click)="irCrearEvento()">+ Crear Evento</ion-button>
-    </div>
-  </ion-content>
+  <!-- Tarjeta de ejemplo -->
+  <ion-card>
+    <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+    <ion-card-header>
+      <ion-card-title>Card Title</ion-card-title>
+      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      Here's a small text description for the card content. Nothing more, nothing less.
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Botón Crear Evento -->
+  <div class="ion-padding">
+    <ion-button id="crear-evento-button" fill="outline" (click)="irCrearEvento()">+ Crear Evento</ion-button>
+  </div>
 </ion-content>
