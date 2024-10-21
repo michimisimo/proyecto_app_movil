@@ -32,8 +32,8 @@ export class ServiceEventoService {
   }
 
   // Actualizar un evento existente
-  updateEvento(id: number, data: Evento): Observable<HttpResponse<any>> {
-    return this.apiService.patch(`evento/${id}`, data); // Llama al método patch para actualizar un evento
+  updateEvento(id: string, data: Evento): Observable<HttpResponse<Evento>> {
+    return this.apiService.patch<Evento>(`evento?id_evento=eq.${id}`, data); // Llama al método patch para actualizar un evento
   }
 
   // Eliminar un evento
