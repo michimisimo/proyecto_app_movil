@@ -23,21 +23,22 @@
     <div>
       <ion-card *ngFor="let evento of listaEventos" (click)="abrirEvento(evento)">
         <div class="image-container">
-          <img alt="foto portada" [src]="evento.url_foto_portada ? evento.url_foto_portada : 'https://ionicframework.com/docs/img/demos/card-media.png'" />
+          <img alt="foto portada"
+            [src]="evento.url_foto_portada ? evento.url_foto_portada : 'https://ionicframework.com/docs/img/demos/card-media.png'" />
         </div>
         <ion-card-header>
           <ion-card-title>{{ evento.nombre }}</ion-card-title>
           <ion-card-subtitle>{{ evento.descripcion }}</ion-card-subtitle>
         </ion-card-header>
-      
+
         <ion-card-content>
-          <div *ngIf="listaTags.length > 0 && hasTagsForEvento(evento.id_evento!); else noTags">
-            <ion-chip *ngFor="let tag of listaTags">
+          <div *ngIf="hasTagsForEvento(evento.id_evento!); else noTags">
+            <ion-chip *ngFor="let tag of eventTags[evento.id_evento!]">
               {{ tag.nombre }}
             </ion-chip>
           </div>
           <ng-template #noTags>
-            <div>Evento sin tags</div>
+            <p>No hay tags disponibles para este evento.</p>
           </ng-template>
           <div class="evento-info">
             <strong>Creador:</strong> {{ obtenerNombreCreador(evento.id_evento!) }} <br>
@@ -46,7 +47,7 @@
           </div>
         </ion-card-content>
       </ion-card>
-      
+
     </div>
   </ion-content>
 

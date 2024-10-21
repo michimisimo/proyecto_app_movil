@@ -60,10 +60,7 @@ export class MisEventosPage implements OnInit {
       console.log('Usuario en mis-eventos:', this.perfilUsuario);
       this.obtenerListaMisEventos();
     });
-  }
-
-  hasTagsForEvento(eventoId: number): boolean {
-    return this.listaTagsEvento.some(tag => tag.id_evento === eventoId);
+    this.obtenerTagsEvento();
   }
 
   obtenerListaMisEventos() {
@@ -105,8 +102,6 @@ export class MisEventosPage implements OnInit {
               next: (Response) => {
                 console.log('evento', Response.body);
                 const evento = (Response.body || []);
-                this.obtenerTagsEvento(invitacion.id_evento)
-
                 this.listaEventos.push(...evento);
               },
               error: (err) => {
@@ -119,7 +114,6 @@ export class MisEventosPage implements OnInit {
             next: (Response) => {
               console.log('evento', Response.body)
               const evento = (Response.body || [])
-              this.obtenerTagsEvento(evento[0].id_evento!)
             }
           })
 
@@ -177,32 +171,47 @@ export class MisEventosPage implements OnInit {
 
   eventTags: { [key: number]: Tag[] } = {};
 
-  obtenerTagsEvento(idEvento: number) {
-    console.log('obteniendo tags para evento', idEvento);
+  hasTagsForEvento(idEvento: number): boolean {
+    return !!this.eventTags[idEvento] && this.eventTags[idEvento].length > 0;
+  }
 
-    // Comprobar si ya tenemos los tags almacenados para este evento
-    if (this.eventTags[idEvento]) {
-      this.listaTags = this.eventTags[idEvento];
+  obtenerTagsEvento() {
+    console.log('obteniendo todos los tags de eventos');
+
+    // Comprobar si ya tenemos los tags almacenados
+    if (Object.keys(this.eventTags).length > 0) {
+      console.log("Tags recuperados de la caché:", this.eventTags);
       return;
     }
 
-    this._tagEventoService.getTagsByEvento(idEvento).subscribe({
+    // Hacer la llamada para obtener todos los tags de eventos
+    this._tagEventoService.getTagEvento().subscribe({
       next: (response) => {
-        this.listaTagsEvento = response.body || [];
-        console.log("lista tag evento:", this.listaTagsEvento);
+        const listaTagEventos = response.body || [];
+        console.log("Lista de tags de eventos:", listaTagEventos);
 
-        const tagRequests = this.listaTagsEvento.map(tag =>
-          this._tagService.getTagById(tag.id_tag).pipe(
+        // Crear solicitudes para obtener información de cada tag
+        const tagRequests = listaTagEventos.map(tagEvento =>
+          this._tagService.getTagById(tagEvento.id_tag).pipe(
             map(response => response.body)
           )
         );
 
+        // Ejecutar todas las solicitudes en paralelo
         forkJoin(tagRequests).subscribe({
           next: (tags) => {
+            // Filtrar y almacenar los tags obtenidos
             this.listaTags = tags.flat().filter((tag): tag is Tag => tag !== null && tag !== undefined);
-            // Almacenar los tags en el mapa
-            this.eventTags[idEvento] = this.listaTags;
-            console.log("Tags obtenidos para evento", idEvento, ":", this.listaTags);
+
+            // Almacenar los tags en el mapa utilizando el id del evento como clave
+            listaTagEventos.forEach(tagEvento => {
+              if (!this.eventTags[tagEvento.id_evento]) {
+                this.eventTags[tagEvento.id_evento] = [];
+              }
+              this.eventTags[tagEvento.id_evento].push(this.listaTags.find(tag => tag.id_tag === tagEvento.id_tag)!);
+            });
+
+            console.log("Tags obtenidos y almacenados:", this.eventTags);
           },
           error: (err) => {
             console.error("Error al obtener tags:", err);
@@ -210,7 +219,7 @@ export class MisEventosPage implements OnInit {
         });
       },
       error: (err) => {
-        console.error("Error al obtener tags del evento:", err);
+        console.error("Error al obtener tags de eventos:", err);
       }
     });
   }
