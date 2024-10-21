@@ -14,6 +14,7 @@
 
 <ion-content [fullscreen]="true">
   <ion-card>
+    <!-- Mostrar información del perfil -->
     <ion-card-header>
       <ion-card-title>Información del Perfil</ion-card-title>
     </ion-card-header>
@@ -28,11 +29,13 @@
           <p>Teléfono: {{perfilUsuario.telefono}}</p>
         </ion-label>
       </ion-item>
+      <!-- Cambiar foto de perfil -->
       <ion-button expand="full" (click)="fileInput.click()">Cambiar Foto de Perfil</ion-button>
       <input type="file" #fileInput (change)="subirFotoPerfil($event)" style="display: none;">
     </ion-card-content>
   </ion-card>
 
+  <!-- Editar perfil usuario -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Editar Perfil</ion-card-title>
@@ -62,7 +65,7 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
-
+  <!-- Cambiar contraseña -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Cambiar Contraseña</ion-card-title>
