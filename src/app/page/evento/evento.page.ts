@@ -233,4 +233,10 @@ export class EventoPage implements OnInit {
     this.router.navigate(['home']);
   }
 
+  irGaleria() {
+    this.router.navigate(['galeria-evento'], {
+      state: { idEvento: this.evento.id_evento }
+    });
+}
+
 }

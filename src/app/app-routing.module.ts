@@ -43,6 +43,10 @@ const routes: Routes = [
     loadChildren: () => import('./page/evento/evento.module').then( m => m.EventoPageModule)
   },
   {
+    path: 'galeria-evento',
+    loadChildren: () => import('./page/galeria-evento/galeria-evento.module').then( m => m.GaleriaEventoPageModule)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

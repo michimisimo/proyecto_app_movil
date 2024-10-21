@@ -1,0 +1,35 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="irHome()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Galería Evento</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Galería Evento</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-grid>
+    <ion-row *ngFor="let fila of listaFotosEvento | slice:0:listaFotosEvento.length; let i = index">
+      <ng-container *ngIf="i % 3 === 0">
+        <ion-col size="4" *ngFor="let foto of listaFotosEvento | slice:i:i+3">
+          <ion-img 
+            alt="foto evento" 
+            [src]="foto.url_foto_evento" 
+            class="evento-small-image">
+          </ion-img>
+        </ion-col>
+      </ng-container>
+    </ion-row>
+  </ion-grid>
+</ion-content>

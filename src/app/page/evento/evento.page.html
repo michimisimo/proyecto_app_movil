@@ -27,15 +27,17 @@
       <ion-row>
         <ng-container *ngFor="let foto of listaFotosEvento | slice:0:3">
           <ion-col size="4">
-            <ion-img 
-              alt="foto evento" 
-              [src]="foto.url_foto_evento" 
-              class="evento-small-image">
-            </ion-img>
+            <ion-button (click)="irGaleria()" fill="clear">
+              <ion-img 
+                alt="foto evento" 
+                [src]="foto.url_foto_evento" 
+                class="evento-small-image">
+              </ion-img>
+            </ion-button>
           </ion-col>
         </ng-container>
       </ion-row>
-    </ion-grid>    
+    </ion-grid>
     <!-- Datos del evento -->
     <ion-item>
       <ion-label>{{ evento.descripcion }}</ion-label>
@@ -59,11 +61,9 @@
           <ion-label>Invitados</ion-label>
         </ion-item>
         <div class="ion-padding" slot="content">
-          <div *ngIf="listaInvitados.length> 0; else cargandoInvitados">
+          <div *ngIf="listaInvitados.length > 0; else cargandoInvitados">
             <div *ngFor="let invitado of listaInvitados">
-
-              {{obtenerInvitados(evento.id_evento!)}}
-
+              {{ obtenerInvitados(evento.id_evento!) }}
               {{ invitado.nombre }} {{ invitado.apellido }}
             </div>
           </div>
