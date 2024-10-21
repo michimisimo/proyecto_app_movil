@@ -19,7 +19,9 @@
     </ion-item>
     <!-- Foto portada -->
     <ion-item>
-      <ion-img alt="foto portada" [src]="evento.url_foto_portada ? evento.url_foto_portada : 'https://ionicframework.com/docs/img/demos/card-media.png'" class="evento-image">
+      <ion-img alt="foto portada"
+        [src]="evento.url_foto_portada ? evento.url_foto_portada : 'https://ionicframework.com/docs/img/demos/card-media.png'"
+        class="evento-image">
       </ion-img>
     </ion-item>
     <!-- Tres fotos pequeñas / Vista previa galería -->
@@ -28,10 +30,7 @@
         <ng-container *ngFor="let foto of listaFotosEvento | slice:0:3">
           <ion-col size="4">
             <div (click)="irGaleria()" style="cursor: pointer;">
-              <ion-img 
-                alt="foto evento" 
-                [src]="foto.url_foto_evento" 
-                class="evento-small-image">
+              <ion-img alt="foto evento" [src]="foto.url_foto_evento" class="evento-small-image">
               </ion-img>
             </div>
           </ion-col>
@@ -43,7 +42,7 @@
       <ion-label>{{ evento.descripcion }}</ion-label>
     </ion-item>
     <ion-item>
-      <ion-label>Creador: {{ obtenerNombreCreador(evento.id_evento!) }}</ion-label>
+      <ion-label>Creador: {{nombreCreador}}</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Ubicación: {{ evento.ubicacion }}</ion-label>
@@ -55,7 +54,7 @@
     </ion-item>
 
     <!-- Desplegable lista invitados -->
-    <ion-accordion-group expand="inset" (ionChange)="accordionGroupChange(evento.id_evento!)">
+    <ion-accordion-group expand="inset">
       <ion-accordion value=" invitados">
         <ion-item slot="header" color="light">
           <ion-label>Invitados</ion-label>
@@ -63,12 +62,11 @@
         <div class="ion-padding" slot="content">
           <div *ngIf="listaInvitados.length > 0; else cargandoInvitados">
             <div *ngFor="let invitado of listaInvitados">
-              {{ obtenerInvitados(evento.id_evento!) }}
               {{ invitado.nombre }} {{ invitado.apellido }}
             </div>
           </div>
           <ng-template #cargandoInvitados>
-            <ion-label>Cargando invitados...</ion-label>
+            <ion-label>Aun no hay invitados confirmados</ion-label>
           </ng-template>
         </div>
       </ion-accordion>
