@@ -115,6 +115,14 @@ export class MisEventosPage implements OnInit {
             });
           });
 
+          this._eventoService.getEventoByIdCreador(this.perfilUsuario.id_persona!).subscribe({
+            next: (Response) => {
+              console.log('evento', Response.body)
+              const evento = (Response.body || [])
+              this.obtenerTagsEvento(evento[0].id_evento!)
+            }
+          })
+
           // Asegurarse de que cada invitación tenga un ID_evento válido
           this.listaInvitaciones.forEach(inv => {
             if (!inv.id_evento) {
