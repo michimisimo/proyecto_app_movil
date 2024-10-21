@@ -1,4 +1,4 @@
-<<ion-header [translucent]="true">
+<ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button (click)="irHome()">
@@ -43,19 +43,19 @@
         <form (ngSubmit)="actualizarPerfil()">
           <ion-item>
             <ion-label position="floating">Nombre</ion-label>
-            <ion-input type="text" [(ngModel)]="perfilUsuario.nombre" name="nombre" required></ion-input>
+            <ion-input type="text" [(ngModel)]="perfilUsuarioEdicion.nombre" name="nombre" required></ion-input>
           </ion-item>
           <ion-item>
             <ion-label position="floating">Apellido</ion-label>
-            <ion-input type="text" [(ngModel)]="perfilUsuario.apellido" name="apellido" required></ion-input>
+            <ion-input type="text" [(ngModel)]="perfilUsuarioEdicion.apellido" name="apellido" required></ion-input>
           </ion-item>
           <ion-item>
             <ion-label position="floating">Correo</ion-label>
-            <ion-input type="email" [(ngModel)]="perfilUsuario.correo" name="correo" required></ion-input>
+            <ion-input type="email" [(ngModel)]="perfilUsuarioEdicion.correo" name="correo" required></ion-input>
           </ion-item>
           <ion-item>
             <ion-label position="floating">Teléfono</ion-label>
-            <ion-input type="text" [(ngModel)]="perfilUsuario.telefono" name="telefono" required></ion-input>
+            <ion-input type="text" [(ngModel)]="perfilUsuarioEdicion.telefono" name="telefono" required></ion-input>
           </ion-item>
           <ion-button expand="full" type="submit">Guardar Cambios</ion-button>
         </form>

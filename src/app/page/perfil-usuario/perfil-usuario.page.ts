@@ -26,8 +26,10 @@ export class PerfilUsuarioPage implements OnInit {
     telefono: '',
     id_user: 0,
     id_rol: 0,
-    url_foto: null
+    url_foto: null,
   };
+
+  perfilUsuarioEdicion: PerfilUsuario = { ...this.perfilUsuario }; // Copia inicial para edición
 
   password: string = '';
   newPassword: string = '';
@@ -47,6 +49,7 @@ export class PerfilUsuarioPage implements OnInit {
     this._perfilUsuarioService.usuario$.subscribe((usuario) => {
       if (usuario) {
         this.perfilUsuario = usuario;
+        this.perfilUsuarioEdicion = { ...usuario }; // Actualiza la copia en cada carga
       }
       console.log('Usuario en perfil-usuario:', usuario);
     });
@@ -59,41 +62,37 @@ export class PerfilUsuarioPage implements OnInit {
 
   subirFotoPerfil(event: Event) {
     if (event) {
-        const target = event.target as HTMLInputElement;
-        if (target.files && target.files.length > 0) {
-            this.selectedImage = target.files[0];
-            console.log('Imagen seleccionada:', {
-                name: this.selectedImage.name,
-                size: this.selectedImage.size,
-                type: this.selectedImage.type,
-                lastModified: this.selectedImage.lastModified,
-            });
+      const target = event.target as HTMLInputElement;
+      if (target.files && target.files.length > 0) {
+        this.selectedImage = target.files[0];
+        console.log('Imagen seleccionada:', {
+          name: this.selectedImage.name,
+          size: this.selectedImage.size,
+          type: this.selectedImage.type,
+          lastModified: this.selectedImage.lastModified,
+        });
 
-            if (this.selectedImage && this.perfilUsuario.id_persona) {
-                this._perfilUsuarioService.uploadImage(this.perfilUsuario.id_persona, this.selectedImage).subscribe(
-                    (response) => {
-                        console.log('Imagen subida con éxito:', response);
+        if (this.selectedImage && this.perfilUsuario.id_persona) {
+          this._perfilUsuarioService.uploadImage(this.perfilUsuario.id_persona, this.selectedImage).subscribe(
+            (response) => {
+              console.log('Imagen subida con éxito:', response);
 
-                        if(this.selectedImage){
-                          this.perfilUsuario.url_foto = `${environment.storage_url}object/public/fotos-perfil/perfil-${this.perfilUsuario.id_persona}/${this.selectedImage.name}`;
-                        }                        
+              if (this.selectedImage) {
+                this.perfilUsuario.url_foto = `${environment.storage_url}object/public/fotos-perfil/perfil-${this.perfilUsuario.id_persona}/${this.selectedImage.name}`;
+              }
 
-                        if (this.perfilUsuario.id_persona) {
-                            this.updatePerfilUsuario(
-                                this.perfilUsuario.id_persona.toString(),
-                                this.perfilUsuario
-                            );
-                        }
-                    },
-                    (error) => {
-                        console.error('Error al subir la imagen:', error);
-                    }
-                );
+              if (this.perfilUsuario.id_persona) {
+                this.updatePerfilUsuario(this.perfilUsuario.id_persona.toString(), this.perfilUsuario);
+              }
+            },
+            (error) => {
+              console.error('Error al subir la imagen:', error);
             }
+          );
         }
+      }
     }
-}
-
+  }
 
   updatePerfilUsuario(id: string, data: any) {
     this._perfilUsuarioService.updatePerfilUsuario(id, data).subscribe(
@@ -115,13 +114,8 @@ export class PerfilUsuarioPage implements OnInit {
   }
 
   cambiarPassword() {
-    const hashedCurrentPassword = this.authService.encryptPassword(
-      this.password
-    );
-    console.log(
-      'Contraseña actual ingresada encriptada:',
-      hashedCurrentPassword
-    );
+    const hashedCurrentPassword = this.authService.encryptPassword(this.password);
+    console.log('Contraseña actual ingresada encriptada:', hashedCurrentPassword);
 
     if (this.user && hashedCurrentPassword === this.user.password) {
       console.log('La contraseña actual ingresada es correcta');
@@ -129,30 +123,21 @@ export class PerfilUsuarioPage implements OnInit {
       if (this.newPassword === this.repeatNewPassword) {
         console.log('Las nuevas contraseñas coinciden');
 
-        const hashedNewPassword = this.authService.encryptPassword(
-          this.newPassword
-        );
-        console.log(
-          'Contraseña nueva ingresada encriptada:',
-          hashedNewPassword
-        );
+        const hashedNewPassword = this.authService.encryptPassword(this.newPassword);
+        console.log('Contraseña nueva ingresada encriptada:', hashedNewPassword);
         this.user.password = hashedNewPassword;
 
         if (this.user.id_user) {
-          this._userService
-            .updateUserPassword(this.user.id_user.toString(), {
-              password: this.user.password,
-            })
-            .subscribe(
-              (response) => {
-                console.log('Usuario actualizado con éxito', response);
-                this.limpiar();
-                this.router.navigate(['login']);
-              },
-              (error) => {
-                console.error('Error al actualizar el usuario', error);
-              }
-            );
+          this._userService.updateUserPassword(this.user.id_user.toString(), { password: this.user.password }).subscribe(
+            (response) => {
+              console.log('Usuario actualizado con éxito', response);
+              this.limpiar();
+              this.router.navigate(['login']);
+            },
+            (error) => {
+              console.error('Error al actualizar el usuario', error);
+            }
+          );
         } else {
           console.log('El ID de usuario no está definido');
         }
@@ -170,29 +155,30 @@ export class PerfilUsuarioPage implements OnInit {
 
   openEditForm() {
     this.isEditing = !this.isEditing;
+
+    if (this.isEditing) {
+      // Hacer una copia del perfil para editar
+      this.perfilUsuarioEdicion = { ...this.perfilUsuario }; // Copia de seguridad
+    }
   }
 
   actualizarPerfil() {
-    console.log(
-      'Perfil usuario con datos nuevos: ',
-      JSON.stringify(this.perfilUsuario)
-    );
+    console.log('Perfil usuario con datos nuevos: ', JSON.stringify(this.perfilUsuarioEdicion));
 
-    if (this.perfilUsuario.id_persona) {
-      const id = this.perfilUsuario.id_persona.toString();
+    if (this.perfilUsuarioEdicion.id_persona) {
+      const id = this.perfilUsuarioEdicion.id_persona.toString();
 
-      this._perfilUsuarioService
-        .updatePerfilUsuario(id, this.perfilUsuario)
-        .subscribe(
-          (response) => {
-            console.log('Perfil actualizado con éxito', response);
-            this.isEditing = false;
-            this._perfilUsuarioService.setPerfilUsuario(this.perfilUsuario);
-          },
-          (error) => {
-            console.error('Error al actualizar el perfil', error);
-          }
-        );
+      this._perfilUsuarioService.updatePerfilUsuario(id, this.perfilUsuarioEdicion).subscribe(
+        (response) => {
+          console.log('Perfil actualizado con éxito', response);
+          this.isEditing = false;
+          this.perfilUsuario = { ...this.perfilUsuarioEdicion }; // Actualiza solo al guardar
+          this._perfilUsuarioService.setPerfilUsuario(this.perfilUsuario);
+        },
+        (error) => {
+          console.error('Error al actualizar el perfil', error);
+        }
+      );
     } else {
       console.log('El ID de perfil no está definido');
     }
