@@ -64,36 +64,5 @@ export class ServicePerfilUsuarioService {
   deletePerfilUsuario(id: string): Observable<HttpResponse<any>> {
     return this.apiService.delete(`perfil_usuario/${id}`); // Llama al método delete para eliminar un usuario
   }
-
-  uploadImage(idPersona: number, file: File): Observable<any> {
-    const bucketName = 'fotos-perfil';
-    const fileName = `perfil-${idPersona}/${file.name}`;
-
-    // Usa el método `from` para acceder al bucket y `upload` para subir el archivo
-    return new Observable((observer) => {
-      environment.supabase.storage
-        .from(bucketName)
-        .upload(fileName, file)
-        .then(({ data, error }) => {
-          if (error) {
-            observer.error(error);
-          } else {
-            observer.next(data);
-            observer.complete();
-          }
-        })
-        .catch((error) => observer.error(error));
-    });
-  }
-
-  obtenerUrlImagen(bucket: string, path: string): Observable<string | null> {
-    const { data} = environment.supabase.storage.from(bucket).getPublicUrl(path);
   
-    if (data && data.publicUrl) {
-      return from([data.publicUrl]); 
-    } else {
-      console.error('No se pudo obtener la URL de la imagen');
-      return from([null]); 
-    }
-  }
 }
