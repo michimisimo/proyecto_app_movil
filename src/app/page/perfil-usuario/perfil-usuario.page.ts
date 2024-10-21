@@ -19,15 +19,6 @@ export class PerfilUsuarioPage implements OnInit {
     password: '',
   };
 
-  perfilUsuarioMostrar: PerfilUsuario = {
-    nombre: '',
-    apellido: '',
-    correo: '',
-    telefono: '',
-    id_user: 0,
-    id_rol: 0,
-  };
-
   perfilUsuario: PerfilUsuario = {
     nombre: '',
     apellido: '',
@@ -35,6 +26,7 @@ export class PerfilUsuarioPage implements OnInit {
     telefono: '',
     id_user: 0,
     id_rol: 0,
+    url_foto: null
   };
 
   password: string = '';
@@ -54,7 +46,6 @@ export class PerfilUsuarioPage implements OnInit {
   ngOnInit() {
     this._perfilUsuarioService.usuario$.subscribe((usuario) => {
       if (usuario) {
-        this.perfilUsuarioMostrar = usuario;
         this.perfilUsuario = usuario;
       }
       console.log('Usuario en perfil-usuario:', usuario);
@@ -83,10 +74,8 @@ export class PerfilUsuarioPage implements OnInit {
                     (response) => {
                         console.log('Imagen subida con éxito:', response);
 
-                        // Asegúrate de que estás utilizando la propiedad correcta de la respuesta
-                        // Ajusta esto según lo que devuelve Supabase
                         if(this.selectedImage){
-                          this.perfilUsuario.url_foto = `${environment.storage_url}object/fotos-perfil/perfil-${this.perfilUsuario.id_persona}/${this.selectedImage.name}`;
+                          this.perfilUsuario.url_foto = `${environment.storage_url}object/public/fotos-perfil/perfil-${this.perfilUsuario.id_persona}/${this.selectedImage.name}`;
                         }                        
 
                         if (this.perfilUsuario.id_persona) {

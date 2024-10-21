@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ServiceApiConfigService } from '../service-api-config/service-api-config.service';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
 import { environment } from 'src/environments/environment';
 
@@ -70,9 +70,8 @@ export class ServicePerfilUsuarioService {
     const fileName = `perfil-${idPersona}/${file.name}`;
 
     // Usa el método `from` para acceder al bucket y `upload` para subir el archivo
-    return new Observable(observer => {
-      environment.supabase
-        .storage
+    return new Observable((observer) => {
+      environment.supabase.storage
         .from(bucketName)
         .upload(fileName, file)
         .then(({ data, error }) => {
@@ -83,7 +82,18 @@ export class ServicePerfilUsuarioService {
             observer.complete();
           }
         })
-        .catch(error => observer.error(error));
+        .catch((error) => observer.error(error));
     });
+  }
+
+  obtenerUrlImagen(bucket: string, path: string): Observable<string | null> {
+    const { data} = environment.supabase.storage.from(bucket).getPublicUrl(path);
+  
+    if (data && data.publicUrl) {
+      return from([data.publicUrl]); 
+    } else {
+      console.error('No se pudo obtener la URL de la imagen');
+      return from([null]); 
+    }
   }
 }

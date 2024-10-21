@@ -20,7 +20,7 @@
     <ion-card-content>
       <ion-item>
         <ion-avatar slot="start">
-          <img [src]="perfilUsuario.url_foto || '/assets/images/user.jpg'" alt="user">
+          <img [src]="perfilUsuario.url_foto ? perfilUsuario.url_foto : '/assets/images/user.jpg'" alt="user">
         </ion-avatar>
         <ion-label>
           <h2>{{perfilUsuario.nombre}} {{perfilUsuario.apellido}}</h2>
