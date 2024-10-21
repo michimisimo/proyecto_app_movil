@@ -41,7 +41,6 @@ export class EditarEventoPage implements OnInit {
         next: (response) => {
           if (response.body) {
             this.evento = response.body[0];
-            this.eventoEdicion.fecha = new Date(this.evento.fecha);
             this.eventoEdicion = { ...this.evento }; // Inicializa la copia para editar
           }
         }
@@ -71,7 +70,7 @@ export class EditarEventoPage implements OnInit {
     }
   }
 
-  cancelarEdicion() {
+  revertirCambios() {
     this.eventoEdicion = { ...this.evento }; // Restablece la copia a los datos originales
     this.isEditing = false; // Termina la edición
   }
