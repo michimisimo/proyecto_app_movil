@@ -29,7 +29,8 @@ export class EditarEventoPage implements OnInit {
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras.state) {
-      this.evento.id_evento = navigation.extras.state['id'];
+      this.evento.id_evento = navigation.extras.state['idEvento'];
+      console.log("Id evento en editar-evento: "+this.evento.id_evento)
       this.obtenerEvento();
     }
   }
@@ -40,6 +41,7 @@ export class EditarEventoPage implements OnInit {
         next: (response) => {
           if (response.body) {
             this.evento = response.body[0];
+            this.eventoEdicion.fecha = new Date(this.evento.fecha);
             this.eventoEdicion = { ...this.evento }; // Inicializa la copia para editar
           }
         }
@@ -58,6 +60,7 @@ export class EditarEventoPage implements OnInit {
           console.log('Evento actualizado con éxito', response);
           this.evento = { ...this.eventoEdicion }; // Actualiza el evento con los nuevos datos
           this.isEditing = false; // Termina la edición
+          this.irMisEventos();
         },
         (error) => {
           console.error('Error al actualizar el evento', error);
@@ -75,5 +78,9 @@ export class EditarEventoPage implements OnInit {
 
   irHome() {
     this.router.navigate(['home']);
+  }
+
+  irMisEventos() {
+    this.router.navigate(['mis-eventos']);
   }
 }

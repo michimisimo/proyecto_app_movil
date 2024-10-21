@@ -193,4 +193,11 @@ export class EventoPage implements OnInit {
     });
   }
 
+  irEditarEvento() {
+    console.log("Id evento antes de enviar a page editar-evento: "+ this.evento.id_evento)
+    this.router.navigate(['editar-evento'], {
+      state: { idEvento: this.evento.id_evento }
+    });
+  }
+
 }
