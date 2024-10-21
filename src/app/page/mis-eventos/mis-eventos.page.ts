@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { ServiceEventoService } from 'src/app/api/service_evento/service-evento.service';
 import { ServicePerfilUsuarioService } from 'src/app/api/service_perfil_usuario/service-perfil-usuario.service';
 import { Evento } from 'src/app/models/evento';
@@ -49,7 +49,8 @@ export class MisEventosPage implements OnInit {
     private router: Router,
     private __invitacionService: ServiceInvitacionEventoService,
     private _tagService: ServiceTagService,
-    private _tagEventoService: ServiceEventoTagService) { }
+    private _tagEventoService: ServiceEventoTagService,
+    private route : ActivatedRoute) { }
 
   ngOnInit() {
     //Se obtiene el usuario seteado en el Usuario Service
@@ -59,6 +60,12 @@ export class MisEventosPage implements OnInit {
       }
       console.log('Usuario en mis-eventos:', this.perfilUsuario);
       this.obtenerListaMisEventos();
+    });
+    //Reload necesario para recargar la lista después de eliminar un evento
+    this.route.queryParams.subscribe(params => {
+      if (params['reload']) {
+        this.obtenerListaMisEventos();
+      }
     });
   }
 
@@ -72,7 +79,12 @@ export class MisEventosPage implements OnInit {
       this._eventoService.getEventoByIdCreador(this.perfilUsuario.id_persona).subscribe({
         next: (response) => {
           if (response.body) {
-            this.listaEventos = response.body;
+            const listaAllEventos = response.body;  
+            for (const event of listaAllEventos)   {
+              if(event.deshabilitar == false){
+                this.listaEventos.push(event);
+              }
+            }       
             console.log("Lista Eventos:" + JSON.stringify(this.listaEventos));
           }
           this.obtenerInvitaciones();
