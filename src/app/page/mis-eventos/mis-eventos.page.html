@@ -5,7 +5,7 @@
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-buttons slot="end"> 
+    <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Mis Eventos</ion-title>
@@ -29,8 +29,9 @@
         </ion-card-header>
 
         <ion-card-content>
+          Creador: {{ obtenerNombreCreador(evento.id_evento!) }} <br>
           Ubicación: {{evento.ubicacion}}<br>
-          Fecha: {{evento.fecha.toString()}}
+          Fecha: {{evento.fecha| date:'dd-MM-YYYY'}}
         </ion-card-content>
       </ion-card>
     </div>

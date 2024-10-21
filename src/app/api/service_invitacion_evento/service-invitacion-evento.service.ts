@@ -47,5 +47,8 @@ export class ServiceInvitacionEventoService {
     return this.apiService.patch(url, data);
   }
 
+  getInvitacionByEventoId(id: number): Observable<HttpResponse<InvitacionEvento[]>> {
+    return this.apiService.get<InvitacionEvento[]>(`invitacion_evento?id_evento=eq.${id}&select=*`);
+  }
 
 }

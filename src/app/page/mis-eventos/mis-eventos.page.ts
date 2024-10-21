@@ -6,6 +6,7 @@ import { Evento } from 'src/app/models/evento';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
 import { ServiceInvitacionEventoService } from 'src/app/api/service_invitacion_evento/service-invitacion-evento.service';
 import { InvitacionEvento } from 'src/app/models/invitacion_evento';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-mis-eventos',
@@ -32,6 +33,7 @@ export class MisEventosPage implements OnInit {
     id_lista_invitados: 0
   };
 
+  creador: string = '';
   listaEventos: Evento[] = [];
   listaInvitaciones: InvitacionEvento[] = [];
 
@@ -114,5 +116,43 @@ export class MisEventosPage implements OnInit {
       console.log('No se encontró id_persona en perfilUsuario');
     }
   }
+
+  eventosCache = new Map<number, string>(); // Cache para eventos y creadores
+
+  obtenerNombreCreador(id_evento: number): string {
+    // Revisa si el evento ya está en caché
+    if (this.eventosCache.has(id_evento)) {
+      return this.eventosCache.get(id_evento)!;
+    }
+
+    // Busca el evento en la lista
+    const evento = this.listaEventos.find(evento => evento.id_evento === id_evento);
+
+    if (evento) {
+      // Realiza la llamada para obtener el perfil del creador
+      this._perfilUsuarioService.getPerfilUsuarioById(evento.id_creador).subscribe({
+        next: (Response) => {
+          const creadores: PerfilUsuario[] = Response.body || [];
+          if (creadores.length > 0) {
+            const creador = creadores[0];
+            const nombreCompleto = `${creador.nombre} ${creador.apellido}`;
+
+            // Guarda en cache el resultado para evitar futuras llamadas
+            this.eventosCache.set(id_evento, nombreCompleto);
+          }
+        },
+        error: (err) => {
+          console.error('Error al obtener el creador', err);
+        }
+      });
+
+      // Devuelve un mensaje provisional mientras se espera la respuesta
+      return 'Cargando...';
+    } else {
+      return 'Evento no encontrado';
+    }
+  }
+
+
 
 }
