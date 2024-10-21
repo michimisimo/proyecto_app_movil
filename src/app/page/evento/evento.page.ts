@@ -10,6 +10,11 @@ import { ServiceFotoEventoService } from 'src/app/api/service_foto_evento/servic
 import { FotoEvento } from 'src/app/models/foto_evento';
 import { ServiceImageService } from 'src/app/api/service_image/service-image.service';
 import { environment } from 'src/environments/environment';
+import { Tag } from 'src/app/models/tag';
+import { ServiceTagService } from 'src/app/api/service_tag/service-tag.service';
+import { TagEvento } from 'src/app/models/tag_evento';
+import { ServiceEventoTagService } from 'src/app/api/service_evento_tag/service-evento-tag.service';
+
 
 @Component({
   selector: 'app-evento',
@@ -32,11 +37,13 @@ export class EventoPage implements OnInit {
     url_foto_evento: ''
   }
 
+  listaTags: Tag[] = [];
   nombreCreador: string = '';
   listaEventos: Evento[] = [];
   listaFotosEvento: FotoEvento[] = [];
   listaInvitaciones: InvitacionEvento[] = [];
   listaInvitados: PerfilUsuario[] = [];
+  listaTagsEvento: TagEvento[] = [];
 
 
   constructor(
@@ -45,7 +52,9 @@ export class EventoPage implements OnInit {
     private _perfilUsuarioService: ServicePerfilUsuarioService,
     private _invitacionService: ServiceInvitacionEventoService,
     private _fotoEventoService: ServiceFotoEventoService,
-    private _imageService: ServiceImageService) { }
+    private _imageService: ServiceImageService,
+    private _tagService: ServiceTagService,
+    private _tagEventoService: ServiceEventoTagService,) { }
 
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
@@ -65,6 +74,7 @@ export class EventoPage implements OnInit {
           if (response.body) {
             this.evento = response.body[0];
             this.obtenerNombreCreador(this.evento.id_creador!);
+            this.obtenerTagsEvento(this.evento.id_evento!);
             this.obtenerInvitados(this.evento.id_evento!)
             console.log("Evento:" + JSON.stringify(this.evento));
           }
@@ -190,6 +200,33 @@ export class EventoPage implements OnInit {
   irGaleria() {
     this.router.navigate(['galeria-evento'], {
       state: { idEvento: this.evento.id_evento }
+    });
+  }
+
+  obtenerTagsEvento(id_evento: number) {
+    this.listaTagsEvento = [];
+    this.listaTags = []; // Inicializar la lista de tags
+
+    this._tagEventoService.getTagsByEvento(id_evento).subscribe({
+      next: (response) => {
+        this.listaTagsEvento = response.body || []; // Usar un valor por defecto si no hay body
+        console.log('tags evento:', this.listaTagsEvento);
+
+        const tagRequests = this.listaTagsEvento.map(tag =>
+          this._tagService.getTagById(tag.id_tag).toPromise()
+        );
+
+        Promise.all(tagRequests).then(tags => {
+          // Aplanar los resultados
+          this.listaTags = tags.map(res => res!.body!).flat();
+          console.log('lista tags:', this.listaTags);
+        }).catch(err => {
+          console.error('Error al obtener las etiquetas:', err);
+        });
+      },
+      error: (err) => {
+        console.error('Error al obtener los tags del evento:', err);
+      }
     });
   }
 
