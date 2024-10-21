@@ -6,7 +6,11 @@ import { Evento } from 'src/app/models/evento';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
 import { ServiceInvitacionEventoService } from 'src/app/api/service_invitacion_evento/service-invitacion-evento.service';
 import { InvitacionEvento } from 'src/app/models/invitacion_evento';
-import { map, Observable } from 'rxjs';
+import { forkJoin, map, Observable } from 'rxjs';
+import { Tag } from 'src/app/models/tag';
+import { ServiceTagService } from 'src/app/api/service_tag/service-tag.service';
+import { ServiceEventoTagService } from 'src/app/api/service_evento_tag/service-evento-tag.service';
+import { TagEvento } from 'src/app/models/tag_evento';
 
 @Component({
   selector: 'app-mis-eventos',
@@ -35,12 +39,16 @@ export class MisEventosPage implements OnInit {
   creador: string = '';
   listaEventos: Evento[] = [];
   listaInvitaciones: InvitacionEvento[] = [];
+  listaTagsEvento: TagEvento[] = [];
+  listaTags: Tag[] = [];
 
   constructor(
     private _eventoService: ServiceEventoService,
     private _perfilUsuarioService: ServicePerfilUsuarioService,
     private router: Router,
-    private __invitacionService: ServiceInvitacionEventoService) { }
+    private __invitacionService: ServiceInvitacionEventoService,
+    private _tagService: ServiceTagService,
+    private _tagEventoService: ServiceEventoTagService) { }
 
   ngOnInit() {
     //Se obtiene el usuario seteado en el Usuario Service
@@ -51,6 +59,10 @@ export class MisEventosPage implements OnInit {
       console.log('Usuario en mis-eventos:', this.perfilUsuario);
       this.obtenerListaMisEventos();
     });
+  }
+
+  hasTagsForEvento(eventoId: number): boolean {
+    return this.listaTagsEvento.some(tag => tag.id_evento === eventoId);
   }
 
   obtenerListaMisEventos() {
@@ -92,6 +104,8 @@ export class MisEventosPage implements OnInit {
               next: (Response) => {
                 console.log('evento', Response.body);
                 const evento = (Response.body || []);
+                this.obtenerTagsEvento(invitacion.id_evento)
+
                 this.listaEventos.push(...evento);
               },
               error: (err) => {
@@ -150,6 +164,46 @@ export class MisEventosPage implements OnInit {
     } else {
       return 'Evento no encontrado';
     }
+  }
+
+  eventTags: { [key: number]: Tag[] } = {};
+
+  obtenerTagsEvento(idEvento: number) {
+    console.log('obteniendo tags para evento', idEvento);
+
+    // Comprobar si ya tenemos los tags almacenados para este evento
+    if (this.eventTags[idEvento]) {
+      this.listaTags = this.eventTags[idEvento];
+      return;
+    }
+
+    this._tagEventoService.getTagsByEvento(idEvento).subscribe({
+      next: (response) => {
+        this.listaTagsEvento = response.body || [];
+        console.log("lista tag evento:", this.listaTagsEvento);
+
+        const tagRequests = this.listaTagsEvento.map(tag =>
+          this._tagService.getTagById(tag.id_tag).pipe(
+            map(response => response.body)
+          )
+        );
+
+        forkJoin(tagRequests).subscribe({
+          next: (tags) => {
+            this.listaTags = tags.flat().filter((tag): tag is Tag => tag !== null && tag !== undefined);
+            // Almacenar los tags en el mapa
+            this.eventTags[idEvento] = this.listaTags;
+            console.log("Tags obtenidos para evento", idEvento, ":", this.listaTags);
+          },
+          error: (err) => {
+            console.error("Error al obtener tags:", err);
+          }
+        });
+      },
+      error: (err) => {
+        console.error("Error al obtener tags del evento:", err);
+      }
+    });
   }
 
 

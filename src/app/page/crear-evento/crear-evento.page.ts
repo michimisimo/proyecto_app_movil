@@ -22,21 +22,21 @@ export class CrearEventoPage implements OnInit {
     id_user: 0,
     id_rol: 0
   };
-  
+
   evento: Evento = {
     nombre: '',
     descripcion: '',
     fecha: new Date(),
     ubicacion: '',
     id_creador: 0,
-    url_foto_portada: null 
+    url_foto_portada: null
   };
 
   selectedImage: File | null = null;
 
   constructor(
-    private router: Router, 
-    private _perfilUsuarioService: ServicePerfilUsuarioService, 
+    private router: Router,
+    private _perfilUsuarioService: ServicePerfilUsuarioService,
     private _eventoService: ServiceEventoService,
     private _imageService: ServiceImageService
   ) { }
@@ -45,7 +45,7 @@ export class CrearEventoPage implements OnInit {
     this._perfilUsuarioService.usuario$.subscribe(usuario => {
       if (usuario) {
         this.perfilUsuario = usuario;
-      }      
+      }
       console.log('Usuario en crear-evento:', this.perfilUsuario);
     });
   }
@@ -62,21 +62,29 @@ export class CrearEventoPage implements OnInit {
     if (this.perfilUsuario.id_persona) {
       this.evento.id_creador = this.perfilUsuario.id_persona;
     }
-  
+
+    if (this.evento.nombre === '' || this.evento.ubicacion === '' || this.evento.descripcion === '') {
+      console.log('Hay datos en null');
+      return; // Salir si hay datos faltantes
+    }
+
     console.log("Evento: ", JSON.stringify(this.evento));
-  
+
     // Si hay una imagen seleccionada, primero se sube la imagen
     if (this.selectedImage) {
       this.subirFotoPortada(this.selectedImage).then(url => {
         // Se almacena la URL de la imagen en el evento
         this.evento.url_foto_portada = url;
-  
+
         // Se crea el evento con la URL de la imagen
-        this._eventoService.createEvento(this.evento).subscribe(response => {
-          console.log('Evento creado con éxito', response);
-        }, error => {
-          console.error('Error al crear el evento', error);
-        });
+        this._eventoService.createEvento(this.evento).subscribe({
+          next: (Response) => {
+            console.log('evento creado con exito')
+            this.irMisEventos();
+          }, error: (error) => {
+            console.log('error al crear evento');
+          }
+        })
       }).catch(error => {
         console.error('Error al subir la imagen de portada:', error);
       });
@@ -84,12 +92,13 @@ export class CrearEventoPage implements OnInit {
       // Si no hay imagen, crea el evento sin URL
       this._eventoService.createEvento(this.evento).subscribe(response => {
         console.log('Evento creado con éxito', response);
+        this.irMisEventos();
       }, error => {
         console.error('Error al crear el evento', error);
       });
     }
   }
-  
+
   subirFotoPortada(image: File): Promise<string> {
     return new Promise((resolve, reject) => {
       this._imageService.uploadImage('portadas-eventos', 'evento', this.evento.id_creador, image).subscribe(
@@ -103,9 +112,14 @@ export class CrearEventoPage implements OnInit {
         }
       );
     });
-  }  
+  }
 
   irHome() {
     this.router.navigate(['home']);
   }
+
+  irMisEventos() {
+    this.router.navigate(['mis-eventos'])
+  }
+
 }
