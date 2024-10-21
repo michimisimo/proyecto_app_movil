@@ -6,6 +6,8 @@ import { PerfilUsuario } from 'src/app/models/perfil-usuario';
 import { ServicePerfilUsuarioService } from 'src/app/api/service_perfil_usuario/service-perfil-usuario.service';
 import { InvitacionEvento } from 'src/app/models/invitacion_evento';
 import { ServiceInvitacionEventoService } from 'src/app/api/service_invitacion_evento/service-invitacion-evento.service';
+import { ServiceFotoEventoService } from 'src/app/api/service_foto_evento/service-foto-evento.service';
+import { FotoEvento } from 'src/app/models/foto_evento';
 
 @Component({
   selector: 'app-evento',
@@ -24,12 +26,18 @@ export class EventoPage implements OnInit {
   };
 
   listaEventos: Evento[] = [];
+  listaFotosEvento: FotoEvento[] = [];
   listaInvitaciones: InvitacionEvento[] = [];
   listaInvitados: PerfilUsuario[] = [];
   invitadosCargados: boolean = false; // Variable de estado para controlar la carga
 
 
-  constructor(private router: Router, private _eventoService: ServiceEventoService, private _perfilUsuarioService: ServicePerfilUsuarioService, private _invitacionService: ServiceInvitacionEventoService) { }
+  constructor(
+    private router: Router, 
+    private _eventoService: ServiceEventoService, 
+    private _perfilUsuarioService: ServicePerfilUsuarioService, 
+    private _invitacionService: ServiceInvitacionEventoService,
+    private _fotoEventoService: ServiceFotoEventoService) { }
 
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
@@ -38,6 +46,7 @@ export class EventoPage implements OnInit {
       this.evento.id_evento = navigation.extras.state['id'];
       console.log('ID del evento:', this.evento.id_evento);
       this.obtenerEvento();
+      this.obtenerListaFotosEvento();
     }
   }
 
@@ -59,6 +68,24 @@ export class EventoPage implements OnInit {
           }
         }
       })
+    }
+  }
+
+  obtenerListaFotosEvento() {
+    if (this.evento.id_evento) {
+      this._fotoEventoService.getFotoEventoByIdEvento(this.evento.id_evento).subscribe({
+        next: (response) => {
+          if (response.body) {
+            this.listaFotosEvento = response.body;
+            console.log("Lista de fotos:", this.listaFotosEvento); // Verifica que las fotos se carguen correctamente
+          } else {
+            console.log("No se encontraron fotos para este evento.");
+          }
+        },
+        error: (err) => {
+          console.error("Error al obtener fotos:", err);
+        }
+      });
     }
   }
 
