@@ -17,7 +17,7 @@ export class ServicePerfilUsuarioService {
   constructor(
     private apiService: ServiceApiConfigService,
     private httpClient: HttpClient
-  ) {}
+  ) { }
 
   setPerfilUsuario(usuario: PerfilUsuario) {
     this.usuarioSubject.next(usuario);

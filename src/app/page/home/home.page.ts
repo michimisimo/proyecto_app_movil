@@ -3,7 +3,7 @@ import { User } from '../../models/user';
 import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 import { ServicePerfilUsuarioService } from 'src/app/api/service_perfil_usuario/service-perfil-usuario.service';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
-import { Router } from '@angular/router';
+import { Router } from '@angular/router'
 import { InvitacionEvento } from 'src/app/models/invitacion_evento';
 import { ServiceInvitacionEventoService } from 'src/app/api/service_invitacion_evento/service-invitacion-evento.service';
 import { Evento } from 'src/app/models/evento';
@@ -81,6 +81,7 @@ export class HomePage implements OnInit {
       this.__invitacionService.getInvitacionByInvitadoId(idPersona).subscribe({
         next: (Response) => {
           this.listaInvitaciones = (Response.body || []);
+          this.listaInvitaciones = this.listaInvitaciones.filter(invitacion => invitacion.id_estado == 3)
           console.log('Mis invitaciones:', this.listaInvitaciones);
 
           this.listaInvitaciones.forEach(invitacion => {
@@ -111,9 +112,35 @@ export class HomePage implements OnInit {
     }
   }
 
+  eventosCache = new Map<number, string>(); // Cache para eventos y creadores
+
   obtenerNombreEvento(id_evento: number): string {
+    // Revisa si el evento ya está en caché
+    if (this.eventosCache.has(id_evento)) {
+      return this.eventosCache.get(id_evento)!;
+    }
+
     const evento = this.listaEventos.find(evento => evento.id_evento == id_evento);
-    return evento ? evento.nombre : 'Evento no encontrado';
+
+    if (evento) {
+      this._perfilUsuarioService.getPerfilUsuarioById(evento?.id_creador).subscribe({
+        next: (Response) => {
+          const creadores: PerfilUsuario[] = Response.body!;
+          const creador = creadores[0];
+          const nombreCompleto = `${evento?.nombre} | ${creador.nombre} ${creador.apellido}`;
+
+          // Guarda en cache el resultado para no hacer llamadas repetidas
+          this.eventosCache.set(id_evento, nombreCompleto);
+        },
+        error: (err) => {
+          console.error('Error al obtener creador', err);
+        }
+      });
+
+      return 'Cargando...'; // Mientras se hace la llamada, devuelve un texto provisional
+    } else {
+      return 'Evento no encontrado';
+    }
   }
 
   aceptarInvitacion(id_invitacion: number) {
@@ -121,6 +148,7 @@ export class HomePage implements OnInit {
       next: (response) => {
         console.log('invitacion aceptada con éxito:', response);
         this.listaInvitaciones = this.listaInvitaciones.filter(invitacion => invitacion.id_invitacion !== id_invitacion);
+        this.obtenerInvitaciones();
       },
       error: (err) => {
         console.error('Error al aceptar la invitacion:', err);
@@ -134,6 +162,7 @@ export class HomePage implements OnInit {
       next: (response) => {
         console.log('invitacion rechazada con éxito:', response);
         this.listaInvitaciones = this.listaInvitaciones.filter(invitacion => invitacion.id_invitacion !== id_invitacion);
+        this.obtenerInvitaciones();
       },
       error: (err) => {
         console.error('Error al rechazar la invitacion:', err);

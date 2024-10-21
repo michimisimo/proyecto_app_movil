@@ -15,7 +15,7 @@
         <ion-label>Invitaciones a Eventos</ion-label>
       </ion-item>
       <div class="ion-padding" slot="content" *ngFor="let invitacion of listaInvitaciones">
-        {{obtenerNombreEvento(invitacion.id_evento) }}
+        {{ obtenerNombreEvento(invitacion.id_evento) }}
         <ion-button (click)="aceptarInvitacion(invitacion.id_invitacion)">Aceptar</ion-button>
         <ion-button (click)="rechazarInvitacion(invitacion.id_invitacion)">Rechazar</ion-button>
       </div>
