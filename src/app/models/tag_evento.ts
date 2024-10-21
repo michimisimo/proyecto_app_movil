@@ -1,5 +1,5 @@
 export interface TagEvento {
-    ID_evento_tag: number;
-    ID_evento: number;
-    ID_tag: number;
+    id_evento_tag: number;
+    id_evento: number;
+    id_tag: number;
 }

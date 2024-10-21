@@ -45,7 +45,7 @@ export class PerfilUsuarioPage implements OnInit {
     private _userService: ServiceUserService,
     private authService: AuthService,
     private _imageService: ServiceImageService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this._perfilUsuarioService.usuario$.subscribe((usuario) => {
@@ -75,8 +75,8 @@ export class PerfilUsuarioPage implements OnInit {
         });
 
         if (this.selectedImage && this.perfilUsuario.id_persona) {
-          this._imageService.uploadImage('fotos-perfil','perfil',this.perfilUsuario.id_persona, this.selectedImage).subscribe(
-            (response) => {
+          this._imageService.uploadImage('fotos-perfil', 'perfil', this.perfilUsuario.id_persona, this.selectedImage).subscribe({
+            next: (response) => {
               console.log('Imagen subida con éxito:', response);
 
               if (this.selectedImage) {
@@ -84,13 +84,13 @@ export class PerfilUsuarioPage implements OnInit {
               }
 
               if (this.perfilUsuario.id_persona) {
-                this.updatePerfilUsuario(this.perfilUsuario.id_persona.toString(), this.perfilUsuario);
+                this._perfilUsuarioService.updatePerfilUsuario(this.perfilUsuario.id_persona.toString(), this.perfilUsuario);
               }
             },
-            (error) => {
-              console.error('Error al subir la imagen:', error);
+            error: (err) => {
+              console.error('Error al obtener creador', err);
             }
-          );
+          });
         }
       }
     }

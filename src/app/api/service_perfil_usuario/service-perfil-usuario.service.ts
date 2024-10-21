@@ -64,5 +64,5 @@ export class ServicePerfilUsuarioService {
   deletePerfilUsuario(id: string): Observable<HttpResponse<any>> {
     return this.apiService.delete(`perfil_usuario/${id}`); // Llama al método delete para eliminar un usuario
   }
-  
+
 }
