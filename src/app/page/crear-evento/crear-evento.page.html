@@ -1,14 +1,14 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button (click)="irHome()">
+      <ion-button (click)="irHome()">
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
-      </ion-back-button>
+      </ion-button>
     </ion-buttons>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end"> 
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Crear evento</ion-title>
+    <ion-title>Crear Evento</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -40,6 +40,14 @@
       <ion-input type="text" [(ngModel)]="evento.ubicacion" name="ubicacion" required></ion-input>
     </ion-item>
 
+    <ion-item>
+      <ion-label>Foto de Portada</ion-label>
+      <input type="file" (change)="adjuntarFotoPortada($event)" accept="image/*" style="display: none;" #fileInput>
+      <ion-button expand="full" (click)="fileInput.click()">Seleccionar Foto</ion-button>
+      <span *ngIf="selectedImage" style="margin-left: 10px;">{{ selectedImage.name }}</span>
+    </ion-item>
+
     <ion-button expand="full" type="submit">Crear Evento</ion-button>
   </form>
 </ion-content>
+
