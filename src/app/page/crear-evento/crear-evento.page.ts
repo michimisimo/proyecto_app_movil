@@ -101,10 +101,10 @@ export class CrearEventoPage implements OnInit {
 
   subirFotoPortada(image: File): Promise<string> {
     return new Promise((resolve, reject) => {
-      this._imageService.uploadImage('portadas-eventos', 'evento', this.evento.id_creador, image).subscribe(
+      this._imageService.uploadImage('portadas-eventos', 'perfil', this.evento.id_creador, image).subscribe(
         (response) => {
           console.log('Imagen de portada subida con éxito:', response);
-          const url = `${environment.storage_url}object/public/portadas-eventos/evento-${this.evento.id_creador}/${image.name}`;
+          const url = `${environment.storage_url}object/public/portadas-eventos/perfil-${this.evento.id_creador}/${image.name}`;
           resolve(url);
         },
         (error) => {
