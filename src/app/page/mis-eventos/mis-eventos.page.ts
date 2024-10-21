@@ -29,7 +29,8 @@ export class MisEventosPage implements OnInit {
     descripcion: '',
     fecha: new Date(),
     ubicacion: '',
-    id_creador: 0
+    id_creador: 0,
+    url_foto_portada: null
   };
 
   creador: string = '';
