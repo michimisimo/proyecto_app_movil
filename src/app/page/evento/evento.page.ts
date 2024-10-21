@@ -8,6 +8,8 @@ import { InvitacionEvento } from 'src/app/models/invitacion_evento';
 import { ServiceInvitacionEventoService } from 'src/app/api/service_invitacion_evento/service-invitacion-evento.service';
 import { ServiceFotoEventoService } from 'src/app/api/service_foto_evento/service-foto-evento.service';
 import { FotoEvento } from 'src/app/models/foto_evento';
+import { ServiceImageService } from 'src/app/api/service_image/service-image.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-evento',
@@ -25,6 +27,11 @@ export class EventoPage implements OnInit {
     id_creador: 0
   };
 
+  foto_evento: FotoEvento ={
+    id_evento: 0,
+    url_foto_evento: ''
+  }
+
   listaEventos: Evento[] = [];
   listaFotosEvento: FotoEvento[] = [];
   listaInvitaciones: InvitacionEvento[] = [];
@@ -37,7 +44,8 @@ export class EventoPage implements OnInit {
     private _eventoService: ServiceEventoService, 
     private _perfilUsuarioService: ServicePerfilUsuarioService, 
     private _invitacionService: ServiceInvitacionEventoService,
-    private _fotoEventoService: ServiceFotoEventoService) { }
+    private _fotoEventoService: ServiceFotoEventoService,
+    private _imageService: ServiceImageService) { }
 
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
@@ -88,6 +96,52 @@ export class EventoPage implements OnInit {
       });
     }
   }
+
+  abrirSelectorDeArchivos() {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  subirImagenes(event: Event) {
+    const fileInput = event.target as HTMLInputElement;
+  
+    if (fileInput.files) {
+      const archivos = Array.from(fileInput.files); // Convierte a un array
+  
+      archivos.forEach(archivo => {
+        // Maneja la subida de cada archivo
+        if(this.evento.id_evento){
+          this._imageService.uploadImage('eventos', 'evento', this.evento.id_evento, archivo).subscribe(
+            (response) => {
+              console.log('Imagen subida con éxito:', response);
+              const url = `${environment.storage_url}object/public/eventos/evento-${this.evento.id_evento}/${archivo.name}`;
+              // Aquí puedes hacer algo con la URL, como agregarla a una lista
+              console.log('URL de la imagen:', url);
+              if(this.evento.id_evento){
+                this.foto_evento.id_evento = this.evento.id_evento;
+                this.foto_evento.url_foto_evento = url;
+                this._fotoEventoService.createFotoEvento(this.foto_evento).subscribe( 
+                  (response) => {
+                    console.log("Foto del evento subida con éxito")
+                    this.obtenerListaFotosEvento();
+                  }, error => {
+                    console.error('Error al subir foto del evento', error);
+                  });
+              }             
+
+            },
+            (error) => {
+              console.error('Error al subir la imagen:', error);
+            }
+          );
+        }
+
+      });
+    }
+  }
+  
 
   eventosCache = new Map<number, string>(); // Cache para eventos y creadores
 

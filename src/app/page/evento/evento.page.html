@@ -17,10 +17,12 @@
     <ion-item>
       <ion-label><b>{{ evento.nombre }}</b></ion-label>
     </ion-item>
+    <!-- Foto portada -->
     <ion-item>
       <ion-img alt="foto portada" [src]="evento.url_foto_portada ? evento.url_foto_portada : 'https://ionicframework.com/docs/img/demos/card-media.png'" class="evento-image">
       </ion-img>
     </ion-item>
+    <!-- Tres fotos pequeñas / Vista previa galería -->
     <ion-grid>
       <ion-row>
         <ng-container *ngFor="let foto of listaFotosEvento | slice:0:3">
@@ -28,12 +30,13 @@
             <ion-img 
               alt="foto evento" 
               [src]="foto.url_foto_evento" 
-              class="evento-image">
+              class="evento-small-image">
             </ion-img>
           </ion-col>
         </ng-container>
       </ion-row>
     </ion-grid>    
+    <!-- Datos del evento -->
     <ion-item>
       <ion-label>{{ evento.descripcion }}</ion-label>
     </ion-item>
@@ -43,6 +46,13 @@
     <ion-item>
       <ion-label>Ubicación: {{ evento.ubicacion }}</ion-label>
     </ion-item>
+    <!-- Botón para subir imágenes -->
+    <ion-item>
+      <ion-button (click)="abrirSelectorDeArchivos()">Subir Imágenes</ion-button>
+      <input type="file" id="fileInput" (change)="subirImagenes($event)" multiple hidden />
+    </ion-item>
+
+    <!-- Desplegable lista invitados -->
     <ion-accordion-group expand="inset" (ionChange)="accordionGroupChange(evento.id_evento!)">
       <ion-accordion value=" invitados">
         <ion-item slot="header" color="light">
