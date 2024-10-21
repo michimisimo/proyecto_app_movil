@@ -6,6 +6,7 @@ import { User } from 'src/app/models/user';
 import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 import { AuthService } from 'src/app/api/service-auth/auth.service';
 import { environment } from 'src/environments/environment';
+import { ServiceImageService } from 'src/app/api/service_image/service-image.service';
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -42,7 +43,8 @@ export class PerfilUsuarioPage implements OnInit {
     private router: Router,
     private _perfilUsuarioService: ServicePerfilUsuarioService,
     private _userService: ServiceUserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private _imageService: ServiceImageService
   ) {}
 
   ngOnInit() {
@@ -73,7 +75,7 @@ export class PerfilUsuarioPage implements OnInit {
         });
 
         if (this.selectedImage && this.perfilUsuario.id_persona) {
-          this._perfilUsuarioService.uploadImage(this.perfilUsuario.id_persona, this.selectedImage).subscribe(
+          this._imageService.uploadImage('fotos-perfil','perfil',this.perfilUsuario.id_persona, this.selectedImage).subscribe(
             (response) => {
               console.log('Imagen subida con éxito:', response);
 

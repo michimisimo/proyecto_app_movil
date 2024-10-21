@@ -28,8 +28,7 @@ export class MisEventosPage implements OnInit {
     descripcion: '',
     fecha: new Date(),
     ubicacion: '',
-    id_creador: 0,
-    id_lista_invitados: 0
+    id_creador: 0
   };
 
   listaEventos: Evento[] = [];

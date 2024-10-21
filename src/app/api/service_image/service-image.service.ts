@@ -9,9 +9,9 @@ export class ServiceImageService {
 
   constructor() { }
 
-  uploadImage(bucket: string, folder: string, idPersona: number, file: File): Observable<any> {
+  uploadImage(bucket: string, folder: string, id: number, file: File): Observable<any> {
     const bucketName = bucket;
-    const fileName = `${folder}-${idPersona}/${file.name}`;
+    const fileName = `${folder}-${id}/${file.name}`;
 
     // Usa el método `from` para acceder al bucket y `upload` para subir el archivo
     return new Observable((observer) => {

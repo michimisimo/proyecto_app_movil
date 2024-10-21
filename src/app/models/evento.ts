@@ -5,5 +5,5 @@ export interface Evento {
     fecha: Date;
     ubicacion: string;
     id_creador: number;
-    id_lista_invitados: number;
+    url_foto_portada?: string | null;
 }
