@@ -6,4 +6,5 @@ export interface PerfilUsuario {
     id_user?: number;
     id_rol?: number;
     id_persona?: number;
+    url_foto?: string;
 }

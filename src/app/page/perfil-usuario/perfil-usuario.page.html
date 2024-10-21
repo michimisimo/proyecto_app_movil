@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<<ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button (click)="irHome()">
@@ -13,36 +13,77 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div class="contenedor" >
-    <div class="info">
-      <div class="datos">
-        <div class="perfil">
-          <img src="/assets/images/user.jpg" alt="user">
-        </div>
-        <div class="nombre">
-          <p>{{perfilUsuario.nombre}} {{perfilUsuario.apellido}}</p>
-        </div>
-        <div class="email">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Información del Perfil</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-avatar slot="start">
+          <img [src]="perfilUsuario.url_foto || '/assets/images/user.jpg'" alt="user">
+        </ion-avatar>
+        <ion-label>
+          <h2>{{perfilUsuario.nombre}} {{perfilUsuario.apellido}}</h2>
           <p>{{perfilUsuario.correo}}</p>
-        </div>
-        <div class="telefono">
-          <p>Telefono: {{perfilUsuario.telefono}}</p>
-        </div>
-      </div>
-    </div>
-    <div class="conf">
-      <h3>Cambiar Contraseña</h3>
-      <div class="inputs">
-        <label for="Contraseña">Contraseña Actual</label>
-        <input id="password" type="password" [(ngModel)]="password" value="">
-        <label for="Contraseña">Nueva Contraseña</label>
-        <input id="Npassword" type="password" [(ngModel)]="newPassword" value="">
-        <label for="Contraseña">Confirmar Contraseña</label>
-        <input id="Rpassword" type="password" [(ngModel)]="repeatNewPassword" value="">
-        <button id="CambiarContraseña" (click)="cambiarPassword()"> Cambiar </button>
-        <br>
-        <button (click)="irHome()"> Volver</button>
-      </div>
-    </div>
-  </div>
-  
+          <p>Teléfono: {{perfilUsuario.telefono}}</p>
+        </ion-label>
+      </ion-item>
+      <ion-button expand="full" (click)="fileInput.click()">Cambiar Foto de Perfil</ion-button>
+      <input type="file" #fileInput (change)="subirFotoPerfil($event)" style="display: none;">
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Editar Perfil</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="full" (click)="openEditForm()">Editar</ion-button>
+      <ion-list *ngIf="isEditing">
+        <form (ngSubmit)="actualizarPerfil()">
+          <ion-item>
+            <ion-label position="floating">Nombre</ion-label>
+            <ion-input type="text" [(ngModel)]="perfilUsuario.nombre" name="nombre" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Apellido</ion-label>
+            <ion-input type="text" [(ngModel)]="perfilUsuario.apellido" name="apellido" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Correo</ion-label>
+            <ion-input type="email" [(ngModel)]="perfilUsuario.correo" name="correo" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Teléfono</ion-label>
+            <ion-input type="text" [(ngModel)]="perfilUsuario.telefono" name="telefono" required></ion-input>
+          </ion-item>
+          <ion-button expand="full" type="submit">Guardar Cambios</ion-button>
+        </form>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Cambiar Contraseña</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label position="floating">Contraseña Actual</ion-label>
+          <ion-input type="password" [(ngModel)]="password"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Nueva Contraseña</ion-label>
+          <ion-input type="password" [(ngModel)]="newPassword"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Confirmar Contraseña</ion-label>
+          <ion-input type="password" [(ngModel)]="repeatNewPassword"></ion-input>
+        </ion-item>
+        <ion-button expand="full" (click)="cambiarPassword()"> Cambiar </ion-button>
+        <ion-button expand="full" color="light" (click)="irHome()"> Volver </ion-button>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

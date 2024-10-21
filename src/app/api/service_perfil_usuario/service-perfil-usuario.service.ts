@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
 import { ServiceApiConfigService } from '../service-api-config/service-api-config.service';
-import { HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { PerfilUsuario } from 'src/app/models/perfil-usuario';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ServicePerfilUsuarioService {
-
   // Clase de RxJS (Reactive Extensions for JavaScript) que siempre tiene un valor actual
   // Se establece y se limpia el valor a través de las funciones setUser() y clearUser()
   private usuarioSubject = new BehaviorSubject<PerfilUsuario | null>(null);
   usuario$ = this.usuarioSubject.asObservable();
 
-  constructor(private apiService: ServiceApiConfigService) { }
+  constructor(
+    private apiService: ServiceApiConfigService,
+    private httpClient: HttpClient
+  ) {}
 
   setPerfilUsuario(usuario: PerfilUsuario) {
     this.usuarioSubject.next(usuario);
@@ -26,11 +29,17 @@ export class ServicePerfilUsuarioService {
 
   // Método para obtener un usuario por su ID
   getPerfilUsuarioById(id: number): Observable<HttpResponse<PerfilUsuario[]>> {
-    return this.apiService.get<PerfilUsuario[]>(`perfil_usuario?id_persona=eq.${id}&select=*`); // Llama al método get para un usuario específico
+    return this.apiService.get<PerfilUsuario[]>(
+      `perfil_usuario?id_persona=eq.${id}&select=*`
+    ); // Llama al método get para un usuario específico
   }
 
-  getPerfilUsuarioByIdUser(id: number): Observable<HttpResponse<PerfilUsuario[]>> {
-    return this.apiService.get<PerfilUsuario[]>(`perfil_usuario?id_user=eq.${id}&select=*`); // Llama al método get para un usuario específico
+  getPerfilUsuarioByIdUser(
+    id: number
+  ): Observable<HttpResponse<PerfilUsuario[]>> {
+    return this.apiService.get<PerfilUsuario[]>(
+      `perfil_usuario?id_user=eq.${id}&select=*`
+    ); // Llama al método get para un usuario específico
   }
 
   //buscar user
@@ -42,13 +51,39 @@ export class ServicePerfilUsuarioService {
     return this.apiService.post<PerfilUsuario>('perfil_usuario', data); // Llama al método post para crear un nuevo usuario
   }
 
-  updatePerfilUsuario(id: string, data: any): Observable<HttpResponse<any>> {
-    return this.apiService.patch(`perfil_usuario/${id}`, data); // Llama al método patch para actualizar un usuario
+  updatePerfilUsuario(
+    id: string,
+    data: any
+  ): Observable<HttpResponse<PerfilUsuario>> {
+    return this.apiService.patch<PerfilUsuario>(
+      `perfil_usuario?id_persona=eq.${id}`,
+      data
+    ); // Llama al método patch para actualizar un usuario
   }
 
   deletePerfilUsuario(id: string): Observable<HttpResponse<any>> {
     return this.apiService.delete(`perfil_usuario/${id}`); // Llama al método delete para eliminar un usuario
   }
 
-  
+  uploadImage(idPersona: number, file: File): Observable<any> {
+    const bucketName = 'fotos-perfil';
+    const fileName = `perfil-${idPersona}/${file.name}`;
+
+    // Usa el método `from` para acceder al bucket y `upload` para subir el archivo
+    return new Observable(observer => {
+      environment.supabase
+        .storage
+        .from(bucketName)
+        .upload(fileName, file)
+        .then(({ data, error }) => {
+          if (error) {
+            observer.error(error);
+          } else {
+            observer.next(data);
+            observer.complete();
+          }
+        })
+        .catch(error => observer.error(error));
+    });
+  }
 }
