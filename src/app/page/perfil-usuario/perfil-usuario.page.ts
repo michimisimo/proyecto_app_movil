@@ -174,8 +174,8 @@ export class PerfilUsuarioPage implements OnInit {
   actualizarPerfil() {
     console.log('Perfil usuario con datos nuevos: ', JSON.stringify(this.perfilUsuarioEdicion));
 
-    if (this.perfilUsuarioEdicion.id_user) {
-      const id = this.perfilUsuarioEdicion.id_user.toString();
+    if (this.perfilUsuarioEdicion.id_persona) {
+      const id = this.perfilUsuarioEdicion.id_persona.toString();
 
       this._perfilUsuarioService.updatePerfilUsuario(id, this.perfilUsuarioEdicion).subscribe(
         (response) => {
