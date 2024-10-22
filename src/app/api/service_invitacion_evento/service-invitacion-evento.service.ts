@@ -51,4 +51,15 @@ export class ServiceInvitacionEventoService {
     return this.apiService.get<InvitacionEvento[]>(`invitacion_evento?id_evento=eq.${id}&select=*`);
   }
 
+  updateRol(id_invitacion: number, id_rol: number): Observable<HttpResponse<any>> {
+    // Prepara los datos para la actualización
+    const data = { id_rol }; // Asigna el nuevo estado al objeto data
+
+    // Construye la URL para la actualización, utilizando las variables
+    const url = `invitacion_evento?&id_invitacion=eq.${id_invitacion}`;
+
+    // Llama al método PATCH para actualizar el estado del amigo
+    return this.apiService.patch(url, data);
+  }
+
 }

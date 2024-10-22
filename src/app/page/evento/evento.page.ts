@@ -186,12 +186,12 @@ export class EventoPage implements OnInit {
     // Obtiene las invitaciones del evento
     this._invitacionService.getInvitacionByEventoId(eventoId).subscribe({
       next: (Response) => {
-        const listaInvitaciones = (Response.body || [])
+        this.listaInvitaciones = (Response.body || [])
           .filter(invitacion => invitacion.id_estado === 1); // Filtra los invitados confirmados
 
-        console.log(listaInvitaciones)
+        console.log(this.listaInvitaciones)
 
-        listaInvitaciones.forEach(invitacion =>
+        this.listaInvitaciones.forEach(invitacion =>
           this._perfilUsuarioService.getPerfilUsuarioById(invitacion.id_invitado).subscribe({
             next: (Response) => {
               const invitado: PerfilUsuario = (Response.body![0])
@@ -243,6 +243,7 @@ export class EventoPage implements OnInit {
       }
     });
   }
+
   irEditarEvento() {
     console.log("Id evento antes de enviar a page editar-evento: " + this.evento.id_evento)
     this.router.navigate(['editar-evento'], {
@@ -250,5 +251,35 @@ export class EventoPage implements OnInit {
     });
   }
 
+  darAdmin(id_invitado: number) {
+    const invitacion = this.listaInvitaciones.filter(invitacion => invitacion.id_invitado == id_invitado)
+    this._invitacionService.updateRol(invitacion[0].id_invitacion, 1).subscribe({
+      next: (Response) => {
+        console.log('se actualizo el rol a admin para el usuario: ', invitacion[0].id_invitado)
+        this.obtenerInvitados(this.evento.id_evento!);
+      },
+      error: (error) => {
+        console.log('error al dar rol admin a usuario: ', invitacion[0].id_invitado)
+      }
+    })
+  }
+
+  quitarAdmin(id_invitado: number) {
+    const invitacion = this.listaInvitaciones.filter(invitacion => invitacion.id_invitado == id_invitado)
+    this._invitacionService.updateRol(invitacion[0].id_invitacion, 2).subscribe({
+      next: (Response) => {
+        console.log('se actualizo el rol a invitado para el usuario: ', invitacion[0].id_invitado)
+        this.obtenerInvitados(this.evento.id_evento!);
+      },
+      error: (error) => {
+        console.log('error al quitar rol admin a usuario: ', invitacion[0].id_invitado)
+      }
+    })
+  }
+
+  isAdmin(id_invitado: number): Boolean {
+    const invitacion = this.listaInvitaciones.filter(invitacion => invitacion.id_invitado == id_invitado)
+    return invitacion[0].id_rol == 1;
+  }
 
 }

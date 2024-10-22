@@ -71,7 +71,10 @@
             <div *ngIf="listaInvitados.length > 0; else cargandoInvitados">
               <div *ngFor="let invitado of listaInvitados">
                 {{ invitado.nombre }} {{ invitado.apellido }}
-                <ion-button>Dar admin</ion-button>
+                <ion-button *ngIf="!isAdmin(invitado.id_persona!)" (click)="darAdmin(invitado.id_persona!)">Dar
+                  admin</ion-button>
+                <ion-button *ngIf="isAdmin(invitado.id_persona!)" (click)="quitarAdmin(invitado.id_persona!)">Quitar
+                  admin</ion-button>
               </div>
             </div>
             <ng-template #cargandoInvitados>
