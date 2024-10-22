@@ -15,6 +15,7 @@ import { ServiceTagService } from 'src/app/api/service_tag/service-tag.service';
 import { TagEvento } from 'src/app/models/tag_evento';
 import { ServiceEventoTagService } from 'src/app/api/service_evento_tag/service-evento-tag.service';
 import { Preferences } from '@capacitor/preferences';
+import { AlertController } from '@ionic/angular';
 
 
 @Component({
@@ -64,7 +65,8 @@ export class EventoPage implements OnInit {
     private _fotoEventoService: ServiceFotoEventoService,
     private _imageService: ServiceImageService,
     private _tagService: ServiceTagService,
-    private _tagEventoService: ServiceEventoTagService,) { }
+    private _tagEventoService: ServiceEventoTagService,
+    private alertController: AlertController) { }
 
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
@@ -246,29 +248,42 @@ export class EventoPage implements OnInit {
     });
   }
 
-  async irEditarEvento() {   
-    //Validar si la persona logueada es creador del evento y asignar permisos de admin
-    if (this.evento.id_creador == this.perfilUsuario.id_persona){
-      this.usuarioRole = true;      
-    }else{
-      //Obtener el rol de la persona logueada si no es creador
-      if(this.perfilUsuario.id_persona){
+  async irEditarEvento() {
+    // Validar si la persona logueada es creador del evento y asignar permisos de admin
+    if (this.evento.id_creador == this.perfilUsuario.id_persona) {
+      this.usuarioRole = true;
+    } else {
+      // Obtener el rol de la persona logueada si no es creador
+      if (this.perfilUsuario.id_persona) {
         this.usuarioRole = this.isAdmin(this.perfilUsuario.id_persona);
-        if(this.usuarioRole === false){
-          console.log("No tienes permisos para acceder a la página editar-perfil")
+        if (this.usuarioRole === false) {
+          console.log("No tienes permisos para acceder a la página editar-evento");
+          await this.mostrarAlerta("No tienes permisos para acceder a la página editar-evento");
+          return; // Salir de la función si no tiene permisos
         }
       }
     }
+
     await Preferences.set({
       key: 'info',
       value: JSON.stringify({ role: this.usuarioRole }) // Enviar true si es admin
     });
-  
+
     console.log("Id evento antes de enviar a page editar-evento: " + this.evento.id_evento);
     this.router.navigate(['editar-evento'], {
       state: { idEvento: this.evento.id_evento }
     });
-}
+    }
+
+    async mostrarAlerta(mensaje: string) {
+      const alert = await this.alertController.create({
+        header: 'Acceso Denegado',
+        message: mensaje,
+        buttons: ['Aceptar']
+      });
+      await alert.present();
+  }
+  
 
   darAdmin(id_invitado: number) {
     const invitacion = this.listaInvitaciones.filter(invitacion => invitacion.id_invitado == id_invitado)
