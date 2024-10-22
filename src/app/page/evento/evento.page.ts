@@ -37,6 +37,15 @@ export class EventoPage implements OnInit {
     url_foto_evento: ''
   }
 
+  perfilUsuario: PerfilUsuario = {
+    nombre: '',
+    apellido: '',
+    correo: '',
+    telefono: '',
+    id_user: 0,
+    url_foto: null,
+  };
+
   listaTags: Tag[] = [];
   nombreCreador: string = '';
   listaEventos: Evento[] = [];
@@ -44,7 +53,6 @@ export class EventoPage implements OnInit {
   listaInvitaciones: InvitacionEvento[] = [];
   listaInvitados: PerfilUsuario[] = [];
   listaTagsEvento: TagEvento[] = [];
-
 
   constructor(
     private router: Router,
@@ -58,6 +66,12 @@ export class EventoPage implements OnInit {
 
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
+    this._perfilUsuarioService.usuario$.subscribe((usuario) => {
+      if (usuario) {
+        this.perfilUsuario = usuario;
+      }
+      console.log('Usuario en Evento:', usuario);
+    });
     if (navigation && navigation.extras.state) {
       console.log("Id evento por navegacion: " + navigation.extras.state['id'])
       this.evento.id_evento = navigation.extras.state['id'];
@@ -229,12 +243,12 @@ export class EventoPage implements OnInit {
       }
     });
   }
-
   irEditarEvento() {
-    console.log("Id evento antes de enviar a page editar-evento: "+ this.evento.id_evento)
+    console.log("Id evento antes de enviar a page editar-evento: " + this.evento.id_evento)
     this.router.navigate(['editar-evento'], {
       state: { idEvento: this.evento.id_evento }
     });
   }
+
 
 }
