@@ -121,6 +121,12 @@ export class RegistroPage {
           next: response => {
             if (response.body !== null) {
               this.usersList = response.body;
+              for ( let i = 0; i < this.usersList.length; i++ ){
+                if(this.usersList[i].usuario == this.createUser.usuario && this.usersList[i].password == this.createUser.password ){
+                  this.perfilUsuario.id_user = this.usersList[i].id_user;
+                }
+              }
+
               console.log("Después de obtener el ID" + JSON.stringify(this.perfilUsuario));
 
               // Subir perfil de usuario a la BD
