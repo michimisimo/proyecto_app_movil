@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceUserService } from 'src/app/api/service_user/service-user.service';
 import { AuthService } from 'src/app/api/service-auth/auth.service';
 import { AlertController } from '@ionic/angular';
@@ -31,11 +31,17 @@ export class LoginPage {
     private router: Router,
     private authService: AuthService,
     private alertController: AlertController,
-    private _perfilUsuarioService: ServicePerfilUsuarioService
+    private route : ActivatedRoute
   ) { }
 
   ngOnInit() {
-    this.limpiar();
+    this.route.queryParams.subscribe(params => {
+      if (params['reload']) {
+        this.limpiar();
+        console.log('Página de login recargada');
+      }});
+    
+    
   }
 
   // Función para limpiar los campos

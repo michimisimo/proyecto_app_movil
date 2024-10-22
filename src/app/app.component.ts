@@ -26,7 +26,11 @@ export class AppComponent {
     telefono: ''
   }
 
-  constructor(private router: Router, private _userService: ServiceUserService, private menu: MenuController, private _perfilUsuarioService: ServicePerfilUsuarioService) { }
+  constructor(
+    private router: Router, 
+    private _userService: ServiceUserService, 
+    private menu: MenuController, 
+    private _perfilUsuarioService: ServicePerfilUsuarioService) { }
 
   ngOnInit() {
     this._userService.user$.subscribe(user => {
@@ -38,6 +42,7 @@ export class AppComponent {
       this.usuario = usuario;
       console.log('Usuario en app components:', this.usuario);
     });
+    
   }
 
   irVerPerfil() {
@@ -69,6 +74,13 @@ export class AppComponent {
     console.log("TODO VA A ESTAR BIEN <3")
     this.menu.close();
     //this.router.navigate(['/ayuda']); 
+  }
+
+  cerrarSesion(){
+    this.menu.close();
+    this._userService.clearUser();
+    this._perfilUsuarioService.clearPerfilUsuario();
+    this.router.navigate(['login'], { queryParams: { reload: true } })
   }
 }
 
