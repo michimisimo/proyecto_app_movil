@@ -29,7 +29,8 @@ export class HomePage implements OnInit {
     nombre: '',
     apellido: '',
     correo: '',
-    telefono: ''
+    telefono: '',
+    url_foto: ''
   }
 
   constructor(
