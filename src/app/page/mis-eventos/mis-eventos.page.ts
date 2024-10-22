@@ -59,7 +59,6 @@ export class MisEventosPage implements OnInit {
       }
       console.log('Usuario en mis-eventos:', this.perfilUsuario);
       this.obtenerListaMisEventos();
-      this.obtenerTagsEvento();
     });
     //Reload necesario para recargar la lista después de eliminar un evento
     this.route.queryParams.subscribe(params => {
@@ -114,7 +113,9 @@ export class MisEventosPage implements OnInit {
               next: (Response) => {
                 console.log('evento', Response.body);
                 const evento = (Response.body || []);
-                this.listaEventos.push(...evento);
+                if (evento[0].deshabilitar == false){
+                  this.listaEventos.push(...evento);
+                }
                 this.obtenerTagsEvento();
               },
               error: (err) => {
