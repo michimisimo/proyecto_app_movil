@@ -26,7 +26,6 @@ export class PerfilUsuarioPage implements OnInit {
     correo: '',
     telefono: '',
     id_user: 0,
-    id_rol: 0,
     url_foto: null,
   };
 

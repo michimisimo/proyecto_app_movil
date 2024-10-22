@@ -24,8 +24,7 @@ export class MisEventosPage implements OnInit {
     apellido: '',
     correo: '',
     telefono: '',
-    id_user: 0,
-    id_rol: 0
+    id_user: 0
   };
 
   evento: Evento = {
