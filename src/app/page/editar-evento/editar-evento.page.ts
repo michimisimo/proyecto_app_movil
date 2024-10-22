@@ -137,7 +137,7 @@ export class EditarEventoPage implements OnInit {
   }
 
   irMisEventos() {
-    this.router.navigate(['mis-eventos'], { queryParams: { reload: true } });
+    this.router.navigate(['home']/* , { queryParams: { reload: true } } */);
 
   }
 

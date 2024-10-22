@@ -59,14 +59,15 @@ export class MisEventosPage implements OnInit {
       }
       console.log('Usuario en mis-eventos:', this.perfilUsuario);
       this.obtenerListaMisEventos();
+      this.obtenerTagsEvento();
     });
-    //Reload necesario para recargar la lista después de eliminar un evento
+    /* //Reload necesario para recargar la lista después de eliminar un evento
     this.route.queryParams.subscribe(params => {
       if (params['reload']) {
         this.obtenerListaMisEventos();
         this.obtenerTagsEvento();
       }
-    });
+    }); */
   }
 
   obtenerListaMisEventos() {
@@ -116,7 +117,7 @@ export class MisEventosPage implements OnInit {
                 if (evento[0].deshabilitar == false){
                   this.listaEventos.push(...evento);
                 }
-                this.obtenerTagsEvento();
+                /* this.obtenerTagsEvento(); */
               },
               error: (err) => {
                 console.error('Error al obtener eventos:', err);
