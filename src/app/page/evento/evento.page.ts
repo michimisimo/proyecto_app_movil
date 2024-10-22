@@ -54,6 +54,7 @@ export class EventoPage implements OnInit {
   listaInvitaciones: InvitacionEvento[] = [];
   listaInvitados: PerfilUsuario[] = [];
   listaTagsEvento: TagEvento[] = [];
+  usuarioRole: Boolean = false;
 
   constructor(
     private router: Router,
@@ -245,17 +246,29 @@ export class EventoPage implements OnInit {
     });
   }
 
-  async irEditarEvento() {
+  async irEditarEvento() {   
+    //Validar si la persona logueada es creador del evento y asignar permisos de admin
+    if (this.evento.id_creador == this.perfilUsuario.id_persona){
+      this.usuarioRole = true;      
+    }else{
+      //Obtener el rol de la persona logueada si no es creador
+      if(this.perfilUsuario.id_persona){
+        this.usuarioRole = this.isAdmin(this.perfilUsuario.id_persona);
+        if(this.usuarioRole === false){
+          console.log("No tienes permisos para acceder a la página editar-perfil")
+        }
+      }
+    }
     await Preferences.set({
-      key: 'informacion',
-      value: JSON.stringify({ rol: "admin"/* Aquí iría la variable que trae el rol */ }) 
+      key: 'info',
+      value: JSON.stringify({ role: this.usuarioRole }) // Enviar true si es admin
     });
   
-    console.log("Id evento antes de enviar a page editar-evento: "+ this.evento.id_evento)
+    console.log("Id evento antes de enviar a page editar-evento: " + this.evento.id_evento);
     this.router.navigate(['editar-evento'], {
       state: { idEvento: this.evento.id_evento }
     });
-  }
+}
 
   darAdmin(id_invitado: number) {
     const invitacion = this.listaInvitaciones.filter(invitacion => invitacion.id_invitado == id_invitado)
