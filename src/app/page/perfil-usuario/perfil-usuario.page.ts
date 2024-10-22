@@ -29,7 +29,7 @@ export class PerfilUsuarioPage implements OnInit {
     url_foto: null,
   };
 
-  perfilUsuarioEdicion: PerfilUsuario = { ...this.perfilUsuario }; // Copia inicial para edición
+  perfilUsuarioEdicion: PerfilUsuario = { ...this.perfilUsuario };
 
   password: string = '';
   newPassword: string = '';
@@ -50,7 +50,7 @@ export class PerfilUsuarioPage implements OnInit {
     this._perfilUsuarioService.usuario$.subscribe((usuario) => {
       if (usuario) {
         this.perfilUsuario = usuario;
-        this.perfilUsuarioEdicion = { ...usuario }; // Actualiza la copia en cada carga
+        this.perfilUsuarioEdicion = { ...usuario };
       }
       console.log('Usuario en perfil-usuario:', usuario);
     });
@@ -73,21 +73,30 @@ export class PerfilUsuarioPage implements OnInit {
           lastModified: this.selectedImage.lastModified,
         });
 
-        if (this.selectedImage && this.perfilUsuario.id_persona) {
-          this._imageService.uploadImage('fotos-perfil', 'perfil', this.perfilUsuario.id_persona, this.selectedImage).subscribe({
+        if (this.selectedImage && this.perfilUsuario.id_user) {
+          this._imageService.uploadImage('fotos-perfil', 'perfil', this.perfilUsuario.id_user, this.selectedImage).subscribe({
             next: (response) => {
               console.log('Imagen subida con éxito:', response);
 
               if (this.selectedImage) {
-                this.perfilUsuario.url_foto = `${environment.storage_url}object/public/fotos-perfil/perfil-${this.perfilUsuario.id_persona}/${this.selectedImage.name}`;
+                this.perfilUsuario.url_foto = `${environment.storage_url}object/public/fotos-perfil/perfil-${this.perfilUsuario.id_user}/${this.selectedImage.name}`;
               }
+              console.log('Perfil usuario antes de actualizar: '+JSON.stringify(this.perfilUsuario));
 
               if (this.perfilUsuario.id_persona) {
-                this._perfilUsuarioService.updatePerfilUsuario(this.perfilUsuario.id_persona.toString(), this.perfilUsuario);
+                this._perfilUsuarioService.updatePerfilUsuario(this.perfilUsuario.id_persona.toString(), this.perfilUsuario).subscribe({
+                  next: (updateResponse) => {
+                    console.log('Perfil actualizado con éxito:', updateResponse);
+                    console.log('Perfil usuario después de actualizar: '+JSON.stringify(this.perfilUsuario));
+                  },
+                  error: (err) => {
+                    console.error('Error al actualizar el perfil:', err);
+                  }
+                });
               }
             },
             error: (err) => {
-              console.error('Error al obtener creador', err);
+              console.error('Error al subir la imagen:', err);
             }
           });
         }
@@ -158,22 +167,21 @@ export class PerfilUsuarioPage implements OnInit {
     this.isEditing = !this.isEditing;
 
     if (this.isEditing) {
-      // Hacer una copia del perfil para editar
-      this.perfilUsuarioEdicion = { ...this.perfilUsuario }; // Copia de seguridad
+      this.perfilUsuarioEdicion = { ...this.perfilUsuario };
     }
   }
 
   actualizarPerfil() {
     console.log('Perfil usuario con datos nuevos: ', JSON.stringify(this.perfilUsuarioEdicion));
 
-    if (this.perfilUsuarioEdicion.id_persona) {
-      const id = this.perfilUsuarioEdicion.id_persona.toString();
+    if (this.perfilUsuarioEdicion.id_user) {
+      const id = this.perfilUsuarioEdicion.id_user.toString();
 
       this._perfilUsuarioService.updatePerfilUsuario(id, this.perfilUsuarioEdicion).subscribe(
         (response) => {
           console.log('Perfil actualizado con éxito', response);
           this.isEditing = false;
-          this.perfilUsuario = { ...this.perfilUsuarioEdicion }; // Actualiza solo al guardar
+          this.perfilUsuario = { ...this.perfilUsuarioEdicion };
           this._perfilUsuarioService.setPerfilUsuario(this.perfilUsuario);
         },
         (error) => {
