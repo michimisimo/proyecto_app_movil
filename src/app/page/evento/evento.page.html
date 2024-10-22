@@ -67,14 +67,30 @@
           <ion-label>Invitados</ion-label>
         </ion-item>
         <div class="ion-padding" slot="content">
-          <div *ngIf="listaInvitados.length > 0; else cargandoInvitados">
-            <div *ngFor="let invitado of listaInvitados">
-              {{ invitado.nombre }} {{ invitado.apellido }}
+          <div *ngIf="perfilUsuario.id_persona == evento.id_creador">
+            <div *ngIf="listaInvitados.length > 0; else cargandoInvitados">
+              <div *ngFor="let invitado of listaInvitados">
+                {{ invitado.nombre }} {{ invitado.apellido }}
+                <ion-button *ngIf="!isAdmin(invitado.id_persona!)" (click)="darAdmin(invitado.id_persona!)">Dar
+                  admin</ion-button>
+                <ion-button *ngIf="isAdmin(invitado.id_persona!)" (click)="quitarAdmin(invitado.id_persona!)">Quitar
+                  admin</ion-button>
+              </div>
             </div>
+            <ng-template #cargandoInvitados>
+              <ion-label>Aun no hay invitados confirmados</ion-label>
+            </ng-template>
           </div>
-          <ng-template #cargandoInvitados>
-            <ion-label>Aun no hay invitados confirmados</ion-label>
-          </ng-template>
+          <div *ngIf="perfilUsuario.id_persona != evento.id_creador">
+            <div *ngIf="listaInvitados.length > 0; else cargandoInvitados">
+              <div *ngFor="let invitado of listaInvitados">
+                {{ invitado.nombre }} {{ invitado.apellido }}
+              </div>
+            </div>
+            <ng-template #cargandoInvitados>
+              <ion-label>Aun no hay invitados confirmados</ion-label>
+            </ng-template>
+          </div>
         </div>
       </ion-accordion>
     </ion-accordion-group>
