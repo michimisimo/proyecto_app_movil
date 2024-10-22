@@ -31,6 +31,15 @@
       <ion-input type="text" [(ngModel)]="eventoEdicion.ubicacion" name="ubicacion" required></ion-input>
     </ion-item>
 
+    <ion-list>
+      <ion-item>
+        <ion-select aria-label="Tags" placeholder="Selecciona Tags" [multiple]="true" name="tags"
+          [(ngModel)]="listaTagsActivos" (ionChange)="TagSeleccionado($event)">
+          <ion-select-option *ngFor="let tag of listaTags" [value]="tag">{{ tag.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
     <ion-button expand="full" type="submit">Actualizar Evento</ion-button>
     <ion-button expand="full" color="light" (click)="revertirCambios()">Revertir cambios</ion-button>
     <ion-button expand="full" color="danger" (click)="eliminarEvento()">Eliminar Evento</ion-button>
