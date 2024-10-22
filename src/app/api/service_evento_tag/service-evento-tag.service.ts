@@ -28,6 +28,11 @@ export class ServiceEventoTagService {
 
   // Eliminar un evento
   deleteTagEvento(id: number): Observable<HttpResponse<any>> {
-    return this.apiService.delete(`evento_tag/${id}`); // Llama al método delete para eliminar un evento
+    return this.apiService.delete(`evento_tag?id_evento_tag=eq.${id}`); // Llama al método delete para eliminar un evento
+  }
+
+  // Crear un nuevo tag
+  createTagEvento(data: any): Observable<HttpResponse<any>> {
+    return this.apiService.post('evento_tag', data);
   }
 }
