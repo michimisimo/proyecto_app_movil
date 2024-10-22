@@ -79,7 +79,7 @@ export class PerfilUsuarioPage implements OnInit {
               console.log('Imagen subida con éxito:', response);
 
               if (this.selectedImage) {
-                this.perfilUsuario.url_foto = `${environment.storage_url}object/public/fotos-perfil/perfil-${this.perfilUsuario.id_user}/${this.selectedImage.name}`;
+                this.perfilUsuario.url_foto = `${environment.storage_url}object/public/fotos-perfil/perfil-${this.perfilUsuario.id_persona}/${this.selectedImage.name}`;
               }
               console.log('Perfil usuario antes de actualizar: '+JSON.stringify(this.perfilUsuario));
 
