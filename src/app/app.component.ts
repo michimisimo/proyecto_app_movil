@@ -66,6 +66,7 @@ export class AppComponent {
   }
 
   irAyuda() {
+    console.log("TODO VA A ESTAR BIEN <3")
     this.menu.close();
     //this.router.navigate(['/ayuda']); 
   }
