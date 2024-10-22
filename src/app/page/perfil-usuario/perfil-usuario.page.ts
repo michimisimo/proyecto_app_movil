@@ -73,8 +73,8 @@ export class PerfilUsuarioPage implements OnInit {
           lastModified: this.selectedImage.lastModified,
         });
 
-        if (this.selectedImage && this.perfilUsuario.id_user) {
-          this._imageService.uploadImage('fotos-perfil', 'perfil', this.perfilUsuario.id_user, this.selectedImage).subscribe({
+        if (this.selectedImage && this.perfilUsuario.id_persona) {
+          this._imageService.uploadImage('fotos-perfil', 'perfil', this.perfilUsuario.id_persona, this.selectedImage).subscribe({
             next: (response) => {
               console.log('Imagen subida con éxito:', response);
 
