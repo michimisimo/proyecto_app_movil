@@ -14,6 +14,7 @@ import { Tag } from 'src/app/models/tag';
 import { ServiceTagService } from 'src/app/api/service_tag/service-tag.service';
 import { TagEvento } from 'src/app/models/tag_evento';
 import { ServiceEventoTagService } from 'src/app/api/service_evento_tag/service-evento-tag.service';
+import { Preferences } from '@capacitor/preferences';
 
 
 @Component({
@@ -44,7 +45,6 @@ export class EventoPage implements OnInit {
   listaInvitaciones: InvitacionEvento[] = [];
   listaInvitados: PerfilUsuario[] = [];
   listaTagsEvento: TagEvento[] = [];
-
 
   constructor(
     private router: Router,
@@ -230,7 +230,12 @@ export class EventoPage implements OnInit {
     });
   }
 
-  irEditarEvento() {
+  async irEditarEvento() {
+    await Preferences.set({
+      key: 'informacion',
+      value: JSON.stringify({ rol: "admin"/* Aquí iría la variable que trae el rol */ }) 
+    });
+  
     console.log("Id evento antes de enviar a page editar-evento: "+ this.evento.id_evento)
     this.router.navigate(['editar-evento'], {
       state: { idEvento: this.evento.id_evento }

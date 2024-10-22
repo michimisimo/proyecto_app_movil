@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { isAdminGuard } from './guards/isAdmin/is-admin.guard';
 
 const routes: Routes = [
   {
@@ -48,7 +49,8 @@ const routes: Routes = [
   },
   {
     path: 'editar-evento',
-    loadChildren: () => import('./page/editar-evento/editar-evento.module').then( m => m.EditarEventoPageModule)
+    loadChildren: () => import('./page/editar-evento/editar-evento.module').then( m => m.EditarEventoPageModule),
+    canActivate: [isAdminGuard]
   },
   {
     path: '',
