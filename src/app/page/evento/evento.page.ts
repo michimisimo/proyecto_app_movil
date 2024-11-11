@@ -16,6 +16,7 @@ import { TagEvento } from 'src/app/models/tag_evento';
 import { ServiceEventoTagService } from 'src/app/api/service_evento_tag/service-evento-tag.service';
 import { Preferences } from '@capacitor/preferences';
 import { AlertController } from '@ionic/angular';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 
 @Component({
@@ -56,6 +57,9 @@ export class EventoPage implements OnInit {
   listaInvitados: PerfilUsuario[] = [];
   listaTagsEvento: TagEvento[] = [];
   usuarioRole: Boolean = false;
+
+  //Tomar foto con la cámara
+  fotoTomada: string | undefined;
 
   constructor(
     private router: Router,
@@ -139,7 +143,7 @@ export class EventoPage implements OnInit {
             (response) => {
               console.log('Imagen subida con éxito:', response);
               const url = `${environment.storage_url}object/public/eventos/evento-${this.evento.id_evento}/${archivo.name}`;
-              // Aquí puedes hacer algo con la URL, como agregarla a una lista
+              // Aquí se puede hacer algo con la URL, como agregarla a una lista
               console.log('URL de la imagen:', url);
               if (this.evento.id_evento) {
                 this.foto_evento.id_evento = this.evento.id_evento;
@@ -314,6 +318,75 @@ export class EventoPage implements OnInit {
   isAdmin(id_invitado: number): Boolean {
     const invitacion = this.listaInvitaciones.filter(invitacion => invitacion.id_invitado == id_invitado)
     return invitacion[0].id_rol == 1;
+  }
+
+  // Función para abrir la cámara y tomar la foto
+  async tomarFoto() {
+    try {
+      const foto = await Camera.getPhoto({
+        resultType: CameraResultType.DataUrl,  // Obtener la foto como Data URL
+        source: CameraSource.Camera,  // Usar la cámara para capturar la foto
+        quality: 100  // Calidad de la imagen (0-100)
+      });
+  
+      // Convertir el DataUrl a un archivo (File)
+      if (foto.dataUrl){
+        const date = new Date().toISOString().replace(/[:.-]/g, '');
+        const fileName = `foto_${date}.jpg`;
+        const imagenFile = this.convertirDataUrlAFile(foto.dataUrl, fileName);
+
+        // Asigna la foto tomada a la variable
+        this.fotoTomada = foto.dataUrl;
+    
+        // Subir la imagen como un archivo
+        this.subirFoto(imagenFile);
+      }     
+    } catch (error) {
+      console.error('Error al tomar la foto:', error);
+    }
+  }
+
+  convertirDataUrlAFile(dataUrl: string, nombreArchivo: string): File {
+    const byteString = atob(dataUrl.split(',')[1]);  // Decodifica el Data URL
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const uintArray = new Uint8Array(arrayBuffer);
+  
+    // Copiar los datos decodificados a un array de bytes
+    for (let i = 0; i < byteString.length; i++) {
+      uintArray[i] = byteString.charCodeAt(i);
+    }
+  
+    // Crear un archivo a partir del array de bytes
+    const archivo = new File([uintArray], nombreArchivo, { type: 'image/jpeg' });  // Asume que es JPEG, ajusta si es otro formato
+    return archivo;
+  }
+
+  // Función para subir la foto (modificar según tu lógica de subida)
+  subirFoto(foto: File) {
+    if (this.evento.id_evento) {
+      this._imageService.uploadImage('eventos', 'evento', this.evento.id_evento, foto).subscribe(
+        (response) => {
+          console.log('Imagen subida con éxito:', response);
+          
+          const url = `${environment.storage_url}object/public/eventos/evento-${this.evento.id_evento}/${foto.name}`;
+          this.foto_evento.id_evento = this.evento.id_evento!;
+          this.foto_evento.url_foto_evento = url;
+          
+          this._fotoEventoService.createFotoEvento(this.foto_evento).subscribe(
+            (response) => {
+              console.log("Foto del evento subida y registrada con éxito");
+            }, 
+            error => {
+              console.error('Error al registrar la foto del evento', error);
+            }
+          );
+          
+        },
+        (error) => {
+          console.error('Error al subir la imagen:', error);
+        }
+      );
+    }
   }
 
 }
