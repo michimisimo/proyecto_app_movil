@@ -40,7 +40,7 @@
     </ion-grid>
     <!-- Datos del evento -->
     <div *ngIf="listaTags.length === 0">
-      
+
     </div>
     <ion-chip *ngFor="let tag of listaTags">
       {{ tag.nombre }}
@@ -54,6 +54,11 @@
     <ion-item>
       <ion-label>Ubicación: {{ evento.ubicacion }}</ion-label>
     </ion-item>
+
+    <div class="map" #map>
+      <div id="mapaEvento" #mapaEvento></div>
+    </div>
+
     <!-- Botón para subir imágenes -->
     <ion-item>
       <ion-button (click)="abrirSelectorDeArchivos()">Subir Imágenes</ion-button>

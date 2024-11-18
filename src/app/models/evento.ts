@@ -7,4 +7,5 @@ export interface Evento {
     id_creador: number;
     url_foto_portada?: string | null;
     deshabilitar?: boolean;
+    id_ubicacion: number;
 }

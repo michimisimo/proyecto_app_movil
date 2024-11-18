@@ -17,6 +17,9 @@ import { ServiceEventoTagService } from 'src/app/api/service_evento_tag/service-
 import { Preferences } from '@capacitor/preferences';
 import { AlertController } from '@ionic/angular';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { ServiceUbicacionService } from 'src/app/api/service_ubicacion/service-ubicacion.service';
+import { Ubicacion } from 'src/app/models/ubicacion';
+import { Map, Marker } from 'mapbox-gl';
 
 
 @Component({
@@ -32,12 +35,20 @@ export class EventoPage implements OnInit {
     descripcion: '',
     fecha: new Date(),
     ubicacion: '',
-    id_creador: 0
+    id_creador: 0,
+    id_ubicacion: 0
   };
 
   foto_evento: FotoEvento = {
     id_evento: 0,
     url_foto_evento: ''
+  }
+
+  ubicacion_evento: Ubicacion = {
+    id_ubicacion: 0,
+    direccion: '',
+    latitud: 0,
+    longitud: 0
   }
 
   perfilUsuario: PerfilUsuario = {
@@ -57,6 +68,8 @@ export class EventoPage implements OnInit {
   listaInvitados: PerfilUsuario[] = [];
   listaTagsEvento: TagEvento[] = [];
   usuarioRole: Boolean = false;
+  mapa!: Map;
+  marcador!: Marker;
 
   //Tomar foto con la cámara
   fotoTomada: string | undefined;
@@ -70,7 +83,8 @@ export class EventoPage implements OnInit {
     private _imageService: ServiceImageService,
     private _tagService: ServiceTagService,
     private _tagEventoService: ServiceEventoTagService,
-    private alertController: AlertController) { }
+    private alertController: AlertController,
+    private _ubicacionService: ServiceUbicacionService) { }
 
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
@@ -98,6 +112,7 @@ export class EventoPage implements OnInit {
             this.obtenerNombreCreador(this.evento.id_creador!);
             this.obtenerTagsEvento(this.evento.id_evento!);
             this.obtenerInvitados(this.evento.id_evento!)
+            this.obtenerUbicacionEvento(this.evento.id_ubicacion)
             console.log("Evento:" + JSON.stringify(this.evento));
           }
         }
@@ -268,6 +283,10 @@ export class EventoPage implements OnInit {
       }
     }
 
+    if (this.mapa) {
+      this.mapa.remove();
+    }
+
     await Preferences.set({
       key: 'info',
       value: JSON.stringify({ role: this.usuarioRole }) // Enviar true si es admin
@@ -277,17 +296,17 @@ export class EventoPage implements OnInit {
     this.router.navigate(['editar-evento'], {
       state: { idEvento: this.evento.id_evento }
     });
-    }
-
-    async mostrarAlerta(mensaje: string) {
-      const alert = await this.alertController.create({
-        header: 'Acceso Denegado',
-        message: mensaje,
-        buttons: ['Aceptar']
-      });
-      await alert.present();
   }
-  
+
+  async mostrarAlerta(mensaje: string) {
+    const alert = await this.alertController.create({
+      header: 'Acceso Denegado',
+      message: mensaje,
+      buttons: ['Aceptar']
+    });
+    await alert.present();
+  }
+
 
   darAdmin(id_invitado: number) {
     const invitacion = this.listaInvitaciones.filter(invitacion => invitacion.id_invitado == id_invitado)
@@ -328,19 +347,19 @@ export class EventoPage implements OnInit {
         source: CameraSource.Camera,  // Usar la cámara para capturar la foto
         quality: 100  // Calidad de la imagen (0-100)
       });
-  
+
       // Convertir el DataUrl a un archivo (File)
-      if (foto.dataUrl){
+      if (foto.dataUrl) {
         const date = new Date().toISOString().replace(/[:.-]/g, '');
         const fileName = `foto_${date}.jpg`;
         const imagenFile = this.convertirDataUrlAFile(foto.dataUrl, fileName);
 
         // Asigna la foto tomada a la variable
         this.fotoTomada = foto.dataUrl;
-    
+
         // Subir la imagen como un archivo
         this.subirFoto(imagenFile);
-      }     
+      }
     } catch (error) {
       console.error('Error al tomar la foto:', error);
     }
@@ -350,12 +369,12 @@ export class EventoPage implements OnInit {
     const byteString = atob(dataUrl.split(',')[1]);  // Decodifica el Data URL
     const arrayBuffer = new ArrayBuffer(byteString.length);
     const uintArray = new Uint8Array(arrayBuffer);
-  
+
     // Copiar los datos decodificados a un array de bytes
     for (let i = 0; i < byteString.length; i++) {
       uintArray[i] = byteString.charCodeAt(i);
     }
-  
+
     // Crear un archivo a partir del array de bytes
     const archivo = new File([uintArray], nombreArchivo, { type: 'image/jpeg' });  // Asume que es JPEG, ajusta si es otro formato
     return archivo;
@@ -367,26 +386,53 @@ export class EventoPage implements OnInit {
       this._imageService.uploadImage('eventos', 'evento', this.evento.id_evento, foto).subscribe(
         (response) => {
           console.log('Imagen subida con éxito:', response);
-          
+
           const url = `${environment.storage_url}object/public/eventos/evento-${this.evento.id_evento}/${foto.name}`;
           this.foto_evento.id_evento = this.evento.id_evento!;
           this.foto_evento.url_foto_evento = url;
-          
+
           this._fotoEventoService.createFotoEvento(this.foto_evento).subscribe(
             (response) => {
               console.log("Foto del evento subida y registrada con éxito");
-            }, 
+            },
             error => {
               console.error('Error al registrar la foto del evento', error);
             }
           );
-          
+
         },
         (error) => {
           console.error('Error al subir la imagen:', error);
         }
       );
     }
+  }
+
+  obtenerUbicacionEvento(id: number) {
+    this._ubicacionService.getUbicacionById(id).subscribe({
+      next: (Response) => {
+        this.ubicacion_evento = Response.body![0];
+        console.log('ubicacion evento: ', this.ubicacion_evento)
+        this.iniciarMapa(this.ubicacion_evento.longitud, this.ubicacion_evento.latitud)
+      }
+    })
+  }
+
+  iniciarMapa(lng: number, lat: number) {
+
+    const container = document.getElementById('mapaEvento');
+    if (container) {
+      container.innerHTML = ''; // Limpia el contenedor
+    }
+
+    this.mapa = new Map({
+      container: 'mapaEvento',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [lng, lat], // Coordenadas iniciales
+      zoom: 17,
+      accessToken: environment.mapbox_Key
+    });
+    this.marcador = new Marker().setLngLat([lng, lat]).addTo(this.mapa);
   }
 
 }
