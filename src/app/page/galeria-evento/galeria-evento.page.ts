@@ -18,15 +18,16 @@ export class GaleriaEventoPage implements OnInit {
     descripcion: '',
     fecha: new Date(),
     ubicacion: '',
-    id_creador: 0
+    id_creador: 0,
+    id_ubicacion: 0
   };
 
   listaFotosEvento: FotoEvento[] = [];
 
   constructor(
-    private _eventoService : ServiceEventoService,
-    private _fotoEventoService : ServiceFotoEventoService,
-    private router : Router) { }
+    private _eventoService: ServiceEventoService,
+    private _fotoEventoService: ServiceFotoEventoService,
+    private router: Router) { }
 
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
@@ -57,7 +58,7 @@ export class GaleriaEventoPage implements OnInit {
         next: (response) => {
           if (response.body) {
             this.listaFotosEvento = response.body;
-            console.log("Lista de fotos:", this.listaFotosEvento); 
+            console.log("Lista de fotos:", this.listaFotosEvento);
           } else {
             console.log("No se encontraron fotos para este evento.");
           }

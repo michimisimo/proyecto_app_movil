@@ -33,7 +33,8 @@ export class MisEventosPage implements OnInit {
     fecha: new Date(),
     ubicacion: '',
     id_creador: 0,
-    url_foto_portada: null
+    url_foto_portada: null,
+    id_ubicacion: 0
   };
 
   creador: string = '';
@@ -114,7 +115,7 @@ export class MisEventosPage implements OnInit {
               next: (Response) => {
                 console.log('evento', Response.body);
                 const evento = (Response.body || []);
-                if (evento[0].deshabilitar == false){
+                if (evento[0].deshabilitar == false) {
                   this.listaEventos.push(...evento);
                 }
                 /* this.obtenerTagsEvento(); */
