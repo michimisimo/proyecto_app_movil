@@ -25,6 +25,7 @@
     "@capacitor/app": "6.0.1",
     "@capacitor/camera": "^6.1.0",
     "@capacitor/core": "6.1.2",
+    "@capacitor/geolocation": "^6.0.1",
     "@capacitor/haptics": "6.0.1",
     "@capacitor/keyboard": "6.0.2",
     "@capacitor/preferences": "^6.0.2",
@@ -33,6 +34,7 @@
     "@supabase/supabase-js": "^2.45.6",
     "crypto-js": "^4.2.0",
     "ionicons": "^7.0.0",
+    "mapbox-gl": "^3.8.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
