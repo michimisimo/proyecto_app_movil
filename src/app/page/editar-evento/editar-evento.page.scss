@@ -1,0 +1,51 @@
+.search-item {
+    align-items: center;
+}
+
+.search-item ion-button {
+    background-color: #ccc;
+    height: 30px;
+    width: 30px;
+    border-radius: 5px;
+}
+
+/* Estilo para la lista de direcciones */
+.address-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 10px;
+    max-height: 120px;
+    overflow-y: auto;
+    border-radius: 5px;
+}
+
+/* Estilo de cada item de la lista */
+.address-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #f1f1f1;
+
+}
+
+/* Remover el borde en el último item */
+.address-item:last-child {
+    border-bottom: none;
+}
+
+/* Opcional: Estilo para mostrar un contenedor del mapa si es necesario */
+.map {
+    display: flex;
+    align-items: center;
+    justify-self: center;
+    width: 360px;
+    height: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#mapaEditar {
+    width: 100%;
+    height: 100%;
+}

@@ -26,10 +26,26 @@
       <ion-input type="date" [(ngModel)]="eventoEdicion.fecha" name="fecha" required></ion-input>
     </ion-item>
 
-    <ion-item>
+    <ion-item class="search-item">
       <ion-label position="floating">Ubicación</ion-label>
-      <ion-input type="text" [(ngModel)]="eventoEdicion.ubicacion" name="ubicacion" required></ion-input>
+      <ion-input #searchbar type="text" [(ngModel)]="eventoEdicion.ubicacion" name="ubicacion" class="search-bar"
+        (input)="search($event)">
+      </ion-input>
+      <!-- Botón para obtener la ubicación actual -->
+      <ion-button slot="end" fill="clear" name="currentLocation" (click)="getCurrentLocation()">
+        <ion-icon name="locate"></ion-icon>
+      </ion-button>
     </ion-item>
+
+    <ul *ngIf="addresses.length > 0" class="address-list">
+      <li *ngFor="let address of addresses" (click)="onSelect(address)" class="address-item">
+        {{ address }}
+      </li>
+    </ul>
+
+    <div class="map" #map>
+      <div id="mapaEditar" #mapaEditar></div>
+    </div>
 
     <ion-list>
       <ion-item>
