@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { createClient } from "@supabase/supabase-js";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServiceImageService {
+
+  supabase_cli= createClient(environment.supabase_url, environment.apiKey);
 
   constructor() { }
 
@@ -15,7 +18,7 @@ export class ServiceImageService {
 
     // Usa el método `from` para acceder al bucket y `upload` para subir el archivo
     return new Observable((observer) => {
-      environment.supabase.storage
+      this.supabase_cli.storage
         .from(bucketName)
         .upload(fileName, file)
         .then(({ data, error }) => {
@@ -31,7 +34,7 @@ export class ServiceImageService {
   }
 
   obtenerUrlImagen(bucket: string, path: string): Observable<string | null> {
-    const { data} = environment.supabase.storage.from(bucket).getPublicUrl(path);
+    const { data} = this.supabase_cli.storage.from(bucket).getPublicUrl(path);
   
     if (data && data.publicUrl) {
       return from([data.publicUrl]); 

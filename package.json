@@ -4,9 +4,13 @@
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
+    "generate-env": "node env-config.js",
+    "serve:dev": "ENV=development LOCAL_ENV=true npm run generate-env && ionic serve",
+    "serve:starting": "ENV=staging LOCAL_ENV=true npm run generate-env && ionic serve",
+    "serve:prod": "ENV=production LOCAL_ENV=true npm run generate-env && ionic serve",
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ENV=production npm run generate-env && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
@@ -33,6 +37,7 @@
     "@ionic/angular": "^8.0.0",
     "@supabase/supabase-js": "^2.45.6",
     "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.5",
     "ionicons": "^7.0.0",
     "mapbox-gl": "^3.8.0",
     "rxjs": "~7.8.0",
