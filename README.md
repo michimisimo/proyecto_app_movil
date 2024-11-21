@@ -3,22 +3,21 @@
 
 Esta aplicación móvil tiene como objetivo centralizar toda la información relacionada con eventos sociales en un solo lugar, eliminando la necesidad de utilizar múltiples redes sociales para compartir fotos o detalles del evento. Con esta solución, los usuarios pueden acceder fácilmente a toda la información del evento de manera organizada y accesible para todos los invitados.
 
-## Características Principales
-* Gestión de eventos: Los usuarios pueden crear eventos, enviar invitaciones y gestionar la lista de invitados.
-* Galería de fotos compartida: Los invitados pueden subir fotos desde su dispositivo o tomar fotografías directamente desde la aplicación. Todas las imágenes están disponibles en una galería centralizada.
-* Visualización de fotos: Al seleccionar una imagen, se despliega una galería para explorar todas las fotos del evento.
-* Gestión de roles: El creador del evento puede asignar roles de administrador a otros usuarios para permitirles editar información del evento.
-* Edición de ubicación: Los administradores pueden actualizar la ubicación del evento utilizando la ubicación actual o un buscador integrado. La ubicación se mostrará en un mapa interactivo para facilitar el acceso de los invitados.
-* Listados personalizados: Los usuarios pueden consultar eventos que han creado o a los que han sido invitados.
+**Características Principales**
+* Gestión de eventos: Crear eventos, enviar invitaciones y gestionar lista de invitados.
+* Carga de imágenes: Subir fotos desde su dispositivo o tomar fotografías directamente desde la aplicación.
+* Gestión de roles: Asignar roles de administrador a otros usuarios.
+* Edición de ubicación: Actualizar la ubicación del evento utilizando la ubicación actual o un buscador integrado.
 
-## Mejoras Futuras
+**Mejoras Futuras**
 * Comentarios en los eventos.
 * Descarga y ampliación de imágenes desde la galería.
 * Inclusión de fotos de perfil de los participantes en sus interacciones.
 * Incorporación de pantallas de carga para mejorar la experiencia de usuario.
 
-## Validación y Seguridad
-La aplicación incluye validación de usuarios y roles para garantizar que las funcionalidades estén disponibles únicamente según los permisos asignados. Además, se implementó la encriptación de información sensible para proteger los datos de los usuarios y cumplir con los estándares de seguridad.
+**Validación y Seguridad**
+* Validación de usuarios y roles. 
+* Encriptación de información sensible.
 
 
 ## Ejecutar Localmente
@@ -66,6 +65,23 @@ Si deseas probar la aplicación en un dispositivo físico o emulador, asegúrate
 
 Siguiendo estos pasos, estás listo para explorar la aplicación en tu entorno local.
 
+## Versión instalable (Beta)
+
+**Requisitos**
+* Android 5.1 (Lollipop) o posterior
+* Aproximadamente 8 MB de espacio disponible en el dispositivo.
+
+**Permisos requeridos:**
+* Acceso a la cámara (para tomar fotos)
+* Acceso a la ubicación (para mapear eventos)
+* Acceso al almacenamiento (para guardar fotos del evento)
+
+**Instrucciones de instalación:**
+1. Descarga el archivo [app-release.apk](https://github.com/michimisimo/proyecto_app_movil/releases/tag/beta).
+2. Habilita la opción "Instalar desde fuentes desconocidas" en la configuración de tu dispositivo:
+   - Ve a **Configuración > Seguridad**.
+   - Activa **Instalar aplicaciones de fuentes desconocidas**.
+3. Abre el archivo APK descargado y sigue las instrucciones para instalar la aplicación.
 
 ## Tecnologías
 
@@ -77,6 +93,18 @@ Node.js
 
 **Externos:**
 Mapbox API
+
+## Imágenes de Referencia
+
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+    <img src="https://i.imgur.com/DikWUtl.jpeg" alt="Proyecto 1" width="150"/>
+    <img src="https://i.imgur.com/lKrR1xJ.jpeg" alt="Proyecto 2" width="150"/>
+    <img src="https://i.imgur.com/t7FhjnP.jpeg" alt="Proyecto 3" width="150"/>
+    <img src="https://i.imgur.com/ZDC4k92.jpeg" alt="Proyecto 4" width="150"/>
+    <img src="https://i.imgur.com/rJh3NSa.jpeg" alt="Proyecto 6" width="150"/>
+</div>
+
+
 ## Autores
 
 - [María José Calderón](https://www.github.com/mariajosecq)
